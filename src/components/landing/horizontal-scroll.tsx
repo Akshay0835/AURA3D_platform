@@ -324,10 +324,11 @@ export default function HorizontalScrollShowcase() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, scale: 0.96, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: -15 }}
-                transition={{ duration: 0.35, ease: "easeInOut" }}
+                initial={{ opacity: 0, rotateY: -30, scale: 0.96, y: 15 }}
+                animate={{ opacity: 1, rotateY: 0, scale: 1, y: 0 }}
+                exit={{ opacity: 0, rotateY: 30, scale: 0.96, y: -15 }}
+                transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
+                style={{ transformStyle: "preserve-3d", perspective: 1000 }}
                 className="w-full max-w-md h-full flex flex-col justify-center"
               >
                 <div className="space-y-4">
@@ -335,16 +336,37 @@ export default function HorizontalScrollShowcase() {
                   {features[activeTab].mockup}
 
                   {/* Highlight key highlights */}
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  <motion.div 
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      hidden: {},
+                      visible: {
+                        transition: {
+                          staggerChildren: 0.08
+                        }
+                      }
+                    }}
+                    className="flex flex-wrap gap-2 justify-center"
+                  >
                     {features[activeTab].bullets.map((bullet, index) => (
-                      <span
+                      <motion.span
                         key={index}
+                        variants={{
+                          hidden: { opacity: 0, y: 10, scale: 0.9 },
+                          visible: { 
+                            opacity: 1, 
+                            y: 0, 
+                            scale: 1,
+                            transition: { type: "spring", stiffness: 300, damping: 20 }
+                          }
+                        }}
                         className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 px-2.5 py-1 rounded-full uppercase"
                       >
                         {bullet}
-                      </span>
+                      </motion.span>
                     ))}
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             </AnimatePresence>

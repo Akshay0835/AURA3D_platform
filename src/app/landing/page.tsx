@@ -10,7 +10,16 @@ import ProblemGrid from '@/components/landing/problem-grid';
 import HorizontalScrollShowcase from '@/components/landing/horizontal-scroll';
 import CoachDemoWidget from '@/components/landing/coach-demo';
 import { useAppStore } from '@/store/useAppStore';
+import InteractiveBackground from '@/components/landing/interactive-bg';
 
+const fadeInUpVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } 
+  }
+} as const;
 
 // Section 5: Stat Counter Component using Framer Motion's high-performance ticker
 function StatCounter({ value, suffix = "", duration = 1.5 }: { value: number; suffix?: string; duration?: number }) {
@@ -72,7 +81,7 @@ const testimonials = [
 export default function LandingPage() {
   const router = useRouter();
   const theme = useAppStore((state) => state.theme);
-  const limeColor = theme === 'dark' ? '#a3e635' : '#65a30d';
+  const limeColor = theme === 'dark' ? '#a3e635' : '#2563eb';
   const cyanColor = theme === 'dark' ? '#06b6d4' : '#0284c7';
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [pricingPeriod, setPricingPeriod] = useState<'monthly' | 'annually'>('monthly');
@@ -134,11 +143,14 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-x-hidden selection:bg-brand-lime selection:text-black transition-colors duration-300">
+    <div className="relative min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-x-hidden selection:bg-brand-lime selection:text-black transition-colors duration-300 bg-dotted-grid">
+      {/* Dynamic Cursor Light Spot & Telemetry Mesh */}
+      <InteractiveBackground />
+
       {/* Background Glowing Ambient Gradients */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-lime/5 rounded-full blur-3xl pointer-events-none opacity-60 dark:opacity-100" />
-      <div className="absolute top-1/3 right-1/4 w-[450px] h-[450px] bg-brand-cyan/5 rounded-full blur-3xl pointer-events-none opacity-60 dark:opacity-100" />
-      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl pointer-events-none opacity-60 dark:opacity-100" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-lime/5 rounded-full blur-3xl pointer-events-none opacity-60 dark:opacity-100 animate-blob" />
+      <div className="absolute top-1/3 right-1/4 w-[450px] h-[450px] bg-brand-cyan/5 rounded-full blur-3xl pointer-events-none opacity-60 dark:opacity-100 animate-blob-reverse" />
+      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl pointer-events-none opacity-60 dark:opacity-100 animate-blob" />
 
       {/* Header / Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 glass-card bg-white/40 dark:bg-zinc-950/40 border-b border-black/5 dark:border-white/5 backdrop-blur-md">
@@ -159,15 +171,18 @@ export default function LandingPage() {
             <a href="#pricing" className="hover:text-black dark:hover:text-white transition-colors">Pricing</a>
           </nav>
 
-          <button 
+          <motion.button 
             onClick={() => launchSequence('/dashboard')}
-            className="relative group overflow-hidden bg-brand-lime text-black font-semibold text-xs px-3 sm:px-5 py-2.5 rounded-lg transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0"
+            whileHover={{ scale: 1.05, y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            className="relative group overflow-hidden bg-brand-lime text-black font-semibold text-xs px-3 sm:px-5 py-2.5 rounded-lg cursor-pointer shrink-0"
           >
             <span className="relative z-10 flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px] sm:text-xs">
               Launch<span className="hidden sm:inline"> Dashboard</span> <ArrowRight className="w-4 h-4" />
             </span>
             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
-          </button>
+          </motion.button>
         </div>
       </header>
 
@@ -196,19 +211,25 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-4">
-            <button 
+            <motion.button 
               onClick={() => launchSequence('/dashboard')}
-              className="bg-zinc-950 text-white hover:bg-zinc-900 dark:bg-white dark:text-black dark:hover:bg-zinc-100 font-semibold px-6 py-3.5 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-black/5 dark:shadow-white/5 transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              className="bg-zinc-950 text-white dark:bg-white dark:text-black font-semibold px-6 py-3.5 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-black/5 dark:shadow-white/5 cursor-pointer"
             >
               Start Your Fitness Journey <ArrowRight className="w-4.5 h-4.5" />
-            </button>
+            </motion.button>
 
-            <button 
+            <motion.button 
               onClick={() => launchSequence('/dashboard/coach')}
-              className="glass-card bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 font-semibold px-6 py-3.5 rounded-xl text-sm transition-colors flex items-center gap-2 cursor-pointer text-zinc-800 dark:text-zinc-200"
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              className="glass-card bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 font-semibold px-6 py-3.5 rounded-xl text-sm flex items-center gap-2 cursor-pointer text-zinc-800 dark:text-zinc-200"
             >
               Try AI Coach
-            </button>
+            </motion.button>
           </div>
 
           <div className="flex items-center gap-8 pt-8 border-t border-black/5 dark:border-white/5 max-w-md">
@@ -239,7 +260,14 @@ export default function LandingPage() {
       </section>
 
       {/* SECTION 2: PROBLEM STATEMENT */}
-      <section id="problems" className="py-24 border-t border-black/5 dark:border-white/5 bg-zinc-50/50 dark:bg-zinc-950/30">
+      <motion.section 
+        id="problems" 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUpVariants}
+        className="py-24 border-t border-black/5 dark:border-white/5 bg-zinc-50/50 dark:bg-zinc-950/30"
+      >
         <div className="max-w-7xl mx-auto px-6 mb-16 text-center space-y-4">
           <span className="text-brand-cyan font-mono text-sm tracking-widest uppercase">The Roadblocks</span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
@@ -250,15 +278,29 @@ export default function LandingPage() {
           </p>
         </div>
         <ProblemGrid />
-      </section>
+      </motion.section>
 
       {/* SECTION 3: FEATURE SHOWCASE (HORIZONTAL SCROLL) */}
-      <section id="features" className="border-t border-black/5 dark:border-white/5">
+      <motion.section 
+        id="features" 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUpVariants}
+        className="border-t border-black/5 dark:border-white/5"
+      >
         <HorizontalScrollShowcase />
-      </section>
+      </motion.section>
 
       {/* SECTION 4: AI COACH DEMO CANVAS */}
-      <section id="coach" className="py-24 border-t border-black/5 dark:border-white/5 bg-zinc-50/70 dark:bg-zinc-950/50">
+      <motion.section 
+        id="coach" 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUpVariants}
+        className="py-24 border-t border-black/5 dark:border-white/5 bg-zinc-50/70 dark:bg-zinc-950/50"
+      >
         <div className="max-w-7xl mx-auto px-6 mb-16 text-center space-y-4">
           <span className="text-pink-500 font-mono text-sm tracking-widest uppercase">AI Agent Interaction</span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
@@ -271,31 +313,54 @@ export default function LandingPage() {
         <div className="px-6">
           <CoachDemoWidget />
         </div>
-      </section>
+      </motion.section>
 
       {/* SECTION 5: STATISTICS COUNTERS */}
-      <section className="py-20 bg-zinc-100/40 dark:bg-zinc-900/40 border-t border-b border-black/5 dark:border-white/5">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          <div className="space-y-2">
-            <StatCounter value={500000} suffix="+" />
-            <p className="text-sm font-semibold tracking-widest text-brand-lime uppercase font-mono">Workouts Completed</p>
-            <p className="text-xs text-zinc-655 dark:text-zinc-500">Tracked with spatial data logs</p>
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUpVariants}
+        className="py-20 bg-zinc-150/20 dark:bg-zinc-900/10 border-t border-b border-black/5 dark:border-white/5 relative overflow-hidden"
+      >
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="glass-card p-8 rounded-3xl relative overflow-hidden text-center transition-all duration-300 hover:scale-[1.02] border border-black/5 dark:border-white/5 shadow-md group bg-white/60 dark:bg-zinc-900/30">
+            <div className="absolute -right-12 -top-12 w-28 h-28 bg-brand-lime/5 blur-2xl rounded-full opacity-60 group-hover:scale-125 transition-all duration-300" />
+            <div className="space-y-2 relative z-10">
+              <StatCounter value={500000} suffix="+" />
+              <p className="text-xs font-black tracking-widest text-brand-lime uppercase font-mono pt-2">Workouts Completed</p>
+              <p className="text-[11px] text-zinc-550 dark:text-zinc-400 font-medium">Tracked with biometric telemetry logs</p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <StatCounter value={1000000} suffix="M+" />
-            <p className="text-sm font-semibold tracking-widest text-brand-cyan uppercase font-mono">Calories Consumed</p>
-            <p className="text-xs text-zinc-655 dark:text-zinc-500">Logged via verified food databases</p>
+          
+          <div className="glass-card p-8 rounded-3xl relative overflow-hidden text-center transition-all duration-300 hover:scale-[1.02] border border-black/5 dark:border-white/5 shadow-md group bg-white/60 dark:bg-zinc-900/30">
+            <div className="absolute -right-12 -top-12 w-28 h-28 bg-brand-cyan/5 blur-2xl rounded-full opacity-60 group-hover:scale-125 transition-all duration-300" />
+            <div className="space-y-2 relative z-10">
+              <StatCounter value={1000000} suffix="+" />
+              <p className="text-xs font-black tracking-widest text-brand-cyan uppercase font-mono pt-2">Calories Consumed</p>
+              <p className="text-[11px] text-zinc-550 dark:text-zinc-400 font-medium">Synced via active nutrition catalogs</p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <StatCounter value={100000} suffix="+" />
-            <p className="text-sm font-semibold tracking-widest text-pink-500 uppercase font-mono">AI Plans Created</p>
-            <p className="text-xs text-zinc-655 dark:text-zinc-500">Customized by neural coaching nodes</p>
+          
+          <div className="glass-card p-8 rounded-3xl relative overflow-hidden text-center transition-all duration-300 hover:scale-[1.02] border border-black/5 dark:border-white/5 shadow-md group bg-white/60 dark:bg-zinc-900/30">
+            <div className="absolute -right-12 -top-12 w-28 h-28 bg-pink-500/5 blur-2xl rounded-full opacity-60 group-hover:scale-125 transition-all duration-300" />
+            <div className="space-y-2 relative z-10">
+              <StatCounter value={100000} suffix="+" />
+              <p className="text-xs font-black tracking-widest text-pink-500 uppercase font-mono pt-2">AI Plans Created</p>
+              <p className="text-[11px] text-zinc-550 dark:text-zinc-400 font-medium">Structured by neural coaching nodes</p>
+            </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* SECTION 6: TESTIMONIALS CAROUSEL */}
-      <section className="py-24 max-w-5xl mx-auto px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUpVariants}
+        className="py-24 max-w-5xl mx-auto px-6"
+      >
         <div className="text-center mb-16 space-y-2">
           <span className="text-brand-lime font-mono text-sm tracking-widest uppercase font-semibold">User Endorsements</span>
           <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-white">Loved by Builders and Athletes</h2>
@@ -359,20 +424,36 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* SECTION 7: INTERACTIVE PRICING TABLE */}
-      <section id="pricing" className="py-24 border-t border-black/5 dark:border-white/5 bg-zinc-50/30 dark:bg-zinc-950/20">
+      <motion.section 
+        id="pricing" 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUpVariants}
+        className="py-24 border-t border-black/5 dark:border-white/5 bg-zinc-50/30 dark:bg-zinc-950/20"
+      >
         <div className="max-w-7xl mx-auto px-6 mb-16 text-center space-y-4">
           <span className="text-brand-cyan font-mono text-sm tracking-widest uppercase">Pricing Matrix</span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
             Invest in Your Physical Intelligence
           </h2>
           <div className="flex items-center justify-center gap-3 pt-4">
-            <span className={`text-sm ${pricingPeriod === 'monthly' ? 'text-zinc-800 dark:text-white font-medium' : 'text-zinc-500'}`}>Monthly</span>
+            <motion.span 
+              animate={{ 
+                scale: pricingPeriod === 'monthly' ? 1.05 : 0.95,
+                color: pricingPeriod === 'monthly' ? (theme === 'dark' ? '#ffffff' : '#18181b') : '#71717a'
+              }}
+              className="text-sm font-semibold select-none cursor-pointer"
+              onClick={() => setPricingPeriod('monthly')}
+            >
+              Monthly
+            </motion.span>
             <button
               onClick={() => setPricingPeriod(pricingPeriod === 'monthly' ? 'annually' : 'monthly')}
-              className="w-12 h-6.5 rounded-full bg-zinc-200 dark:bg-zinc-800 p-1 flex items-center transition-colors relative"
+              className="w-12 h-6.5 rounded-full bg-zinc-200 dark:bg-zinc-800 p-1 flex items-center transition-colors relative cursor-pointer"
             >
               <motion.div
                 layout
@@ -381,26 +462,38 @@ export default function LandingPage() {
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             </button>
-            <span className={`text-sm ${pricingPeriod === 'annually' ? 'text-brand-lime font-medium' : 'text-zinc-500'} flex items-center gap-1.5`}>
+            <motion.span 
+              animate={{ 
+                scale: pricingPeriod === 'annually' ? 1.05 : 0.95,
+                color: pricingPeriod === 'annually' ? '#a3e635' : '#71717a'
+              }}
+              className="text-sm font-semibold flex items-center gap-1.5 select-none cursor-pointer"
+              onClick={() => setPricingPeriod('annually')}
+            >
               Annually <span className="text-[10px] bg-brand-lime/10 border border-brand-lime/30 text-brand-lime font-bold px-1.5 py-0.5 rounded">Save 20%</span>
-            </span>
+            </motion.span>
           </div>
-        </div>
-
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+        </div>        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Free Tier */}
-          <div className="glass-card p-8 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-black/10 dark:hover:border-white/10 transition-all duration-300">
+          <div className="glass-card p-8 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-black/10 dark:hover:border-white/10 transition-all duration-300 bg-white/60 dark:bg-zinc-900/30">
             <div>
-              <span className="text-zinc-500 text-xs font-bold uppercase font-mono tracking-wider">Base Tier</span>
+              <span className="text-zinc-550 text-xs font-bold uppercase font-mono tracking-wider">Base Tier</span>
               <h4 className="text-2xl font-bold text-zinc-900 dark:text-white mt-1">Aura Free</h4>
               <p className="text-zinc-555 dark:text-zinc-400 text-xs mt-3">Essential physical tracking tools for building basic consistency.</p>
               
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-zinc-900 dark:text-white">$0</span>
-                <span className="text-zinc-500 text-xs font-medium">/ month</span>
+              <div className="mt-6 flex flex-col justify-start">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-extrabold text-zinc-900 dark:text-white font-mono">$0</span>
+                  <span className="text-zinc-500 text-xs font-medium">/ month</span>
+                </div>
+                {pricingPeriod === 'annually' && (
+                  <span className="text-[10px] text-zinc-500 font-bold font-mono mt-1 uppercase tracking-wider">
+                    Always free
+                  </span>
+                )}
               </div>
 
-              <ul className="mt-8 space-y-4">
+              <ul className="mt-8 space-y-4 font-medium">
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
                   <span>Manual Workout Planner</span>
@@ -413,25 +506,28 @@ export default function LandingPage() {
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
                   <span>Standard BMI Calculator</span>
                 </li>
-                <li className="flex items-start gap-3 text-sm text-zinc-400 dark:text-zinc-500 line-through">
+                <li className="flex items-start gap-3 text-sm text-zinc-450 dark:text-zinc-500 line-through">
                   <span>AI Workout & Meal Generation</span>
                 </li>
-                <li className="flex items-start gap-3 text-sm text-zinc-400 dark:text-zinc-500 line-through">
+                <li className="flex items-start gap-3 text-sm text-zinc-455 dark:text-zinc-500 line-through">
                   <span>Immersive AI Coach chat sessions</span>
                 </li>
               </ul>
             </div>
-            <button 
+            <motion.button 
               onClick={() => launchSequence('/dashboard')}
-              className="w-full text-center bg-zinc-950 dark:bg-zinc-900 border border-black/5 dark:border-white/5 hover:bg-zinc-900 dark:hover:bg-zinc-800 text-white font-semibold py-3.5 rounded-2xl text-sm transition-colors mt-8 block cursor-pointer"
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              className="w-full text-center bg-zinc-950 dark:bg-zinc-900 border border-black/5 dark:border-white/5 hover:bg-zinc-900 dark:hover:bg-zinc-800 text-white font-semibold py-3.5 rounded-2xl text-sm mt-8 block cursor-pointer shadow-xs"
             >
               Get Started
-            </button>
+            </motion.button>
           </div>
 
           {/* Pro Tier */}
-          <div className="glass-card p-8 rounded-3xl border-brand-lime/20 relative flex flex-col justify-between shadow-xl shadow-brand-lime/5 transform md:scale-[1.03] bg-zinc-100/60 dark:bg-zinc-900/30">
-            <div className="absolute top-4 right-4 bg-brand-lime text-black text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full uppercase">
+          <div className="glass-card p-8 rounded-3xl border-brand-lime/20 relative flex flex-col justify-between shadow-xl shadow-brand-lime/5 transform md:scale-[1.03] bg-zinc-100/60 dark:bg-zinc-900/30 animate-border-glow">
+            <div className="absolute top-4 right-4 bg-brand-lime text-black text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full uppercase">
               Popular Choice
             </div>
             <div>
@@ -439,25 +535,32 @@ export default function LandingPage() {
               <h4 className="text-2xl font-bold text-zinc-900 dark:text-white mt-1">Aura Pro</h4>
               <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-3">Advanced AI intelligence and spatial charts to optimize metabolic changes.</p>
               
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-zinc-900 dark:text-white">
-                  {pricingPeriod === 'monthly' ? '$14' : '$11'}
-                </span>
-                <span className="text-zinc-500 text-xs font-medium">/ month</span>
+              <div className="mt-6 flex flex-col justify-start">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-extrabold text-zinc-900 dark:text-white font-mono">
+                    {pricingPeriod === 'monthly' ? '$14' : '$11'}
+                  </span>
+                  <span className="text-zinc-500 text-xs font-medium">/ month</span>
+                </div>
+                {pricingPeriod === 'annually' && (
+                  <span className="text-[10px] text-brand-lime font-bold font-mono mt-1 uppercase tracking-wider">
+                    Billed annually ($132/yr)
+                  </span>
+                )}
               </div>
 
-              <ul className="mt-8 space-y-4">
+              <ul className="mt-8 space-y-4 font-medium">
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
                   <span>All Free logs & builders</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
-                  <span className="font-medium text-zinc-900 dark:text-white">AI Workout Generator</span>
+                  <span className="font-bold text-zinc-900 dark:text-white">AI Workout Generator</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
-                  <span className="font-medium text-zinc-900 dark:text-white">AI Meal Planner & Macros</span>
+                  <span className="font-bold text-zinc-900 dark:text-white">AI Meal Planner & Macros</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
@@ -469,36 +572,46 @@ export default function LandingPage() {
                 </li>
               </ul>
             </div>
-            <button 
+            <motion.button 
               onClick={() => launchSequence('/dashboard')}
-              className="w-full text-center bg-brand-lime text-black font-semibold py-3.5 rounded-2xl text-sm hover:opacity-95 transition-opacity mt-8 block cursor-pointer"
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              className="w-full text-center bg-brand-lime text-black font-bold py-3.5 rounded-2xl text-sm mt-8 block cursor-pointer shadow-md shadow-brand-lime/10"
             >
               Subscribe Now
-            </button>
+            </motion.button>
           </div>
 
           {/* Elite Tier */}
-          <div className="glass-card p-8 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-black/10 dark:hover:border-white/10 transition-all duration-300">
+          <div className="glass-card p-8 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-black/10 dark:hover:border-white/10 transition-all duration-300 bg-white/60 dark:bg-zinc-900/30">
             <div>
               <span className="text-zinc-500 text-xs font-bold uppercase font-mono tracking-wider">Performance Tier</span>
               <h4 className="text-2xl font-bold text-zinc-900 dark:text-white mt-1">Aura Elite</h4>
               <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-3">24/7 unlimited access to virtual conditioning intelligence and physical logs.</p>
               
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-zinc-900 dark:text-white">
-                  {pricingPeriod === 'monthly' ? '$29' : '$23'}
-                </span>
-                <span className="text-zinc-500 text-xs font-medium">/ month</span>
+              <div className="mt-6 flex flex-col justify-start">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-extrabold text-zinc-900 dark:text-white font-mono">
+                    {pricingPeriod === 'monthly' ? '$29' : '$23'}
+                  </span>
+                  <span className="text-zinc-555 text-xs font-medium">/ month</span>
+                </div>
+                {pricingPeriod === 'annually' && (
+                  <span className="text-[10px] text-brand-lime font-bold font-mono mt-1 uppercase tracking-wider">
+                    Billed annually ($276/yr)
+                  </span>
+                )}
               </div>
 
-              <ul className="mt-8 space-y-4">
+              <ul className="mt-8 space-y-4 font-medium">
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
                   <span>All Pro Features included</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
-                  <span className="font-medium text-zinc-900 dark:text-white">24/7 Voice AI Coach Integration</span>
+                  <span className="font-bold text-zinc-900 dark:text-white">24/7 Voice AI Coach Integration</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                   <Check className="w-4 h-4 text-brand-lime shrink-0 mt-0.5" />
@@ -510,15 +623,18 @@ export default function LandingPage() {
                 </li>
               </ul>
             </div>
-            <button 
+            <motion.button 
               onClick={() => launchSequence('/dashboard')}
-              className="w-full text-center bg-zinc-950 dark:bg-zinc-900 border border-black/5 dark:border-white/5 hover:bg-zinc-900 dark:hover:bg-zinc-800 text-white font-semibold py-3.5 rounded-2xl text-sm transition-colors mt-8 block cursor-pointer"
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              className="w-full text-center bg-zinc-950 dark:bg-zinc-900 border border-black/5 dark:border-white/5 hover:bg-zinc-900 dark:hover:bg-zinc-800 text-white font-semibold py-3.5 rounded-2xl text-sm mt-8 block cursor-pointer shadow-xs"
             >
               Subscribe Now
-            </button>
+            </motion.button>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* SECTION 8: MULTI-COLUMN SAAS FOOTER */}
       <footer className="border-t border-black/5 dark:border-white/5 bg-zinc-50 dark:bg-zinc-950 py-16 px-6">

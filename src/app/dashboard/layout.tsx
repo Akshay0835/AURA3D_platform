@@ -57,6 +57,20 @@ export default function DashboardLayout({
         </main>
       </div>
       
+      {/* Floating Insights Toggle for desktop/tablet when closed */}
+      {!isInsightsOpen && (
+        <button
+          onClick={() => setIsInsightsOpen(true)}
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-2xl rounded-l-xl py-4.5 px-2 flex flex-col items-center gap-2 border border-r-0 border-black/10 dark:border-white/10 hover:pl-3.5 transition-all cursor-pointer group animate-border-glow hover:animate-none hidden sm:flex"
+          title="Open Daily Insights"
+        >
+          <Zap className="w-4 h-4 text-brand-lime dark:text-lime-600 animate-pulse group-hover:scale-110 transition-transform" />
+          <span className="text-[9px] font-extrabold tracking-widest font-mono [writing-mode:vertical-lr] select-none text-zinc-300 dark:text-zinc-700">
+            METRICS
+          </span>
+        </button>
+      )}
+
       {/* Right widgets insights panel */}
       <InsightsPanel isOpen={isInsightsOpen} onClose={() => setIsInsightsOpen(false)} />
     </div>

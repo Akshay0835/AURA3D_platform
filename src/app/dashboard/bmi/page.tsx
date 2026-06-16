@@ -204,14 +204,14 @@ export default function BmiPage() {
                   <Tooltip 
                     contentStyle={{ backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff', borderColor: theme === 'dark' ? '#27272a' : '#e4e4e7', borderRadius: '12px' }}
                     labelStyle={{ color: theme === 'dark' ? '#a1a1aa' : '#52525b', fontSize: '11px', fontWeight: 'bold' }}
-                    itemStyle={{ color: theme === 'dark' ? '#a3e635' : '#65a30d', fontSize: '11px' }}
+                    itemStyle={{ color: theme === 'dark' ? '#a3e635' : '#2563eb', fontSize: '11px' }}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="bmi" 
-                    stroke={theme === 'dark' ? '#a3e635' : '#65a30d'} 
+                    stroke={theme === 'dark' ? '#a3e635' : '#2563eb'} 
                     strokeWidth={2.5} 
-                    dot={{ fill: theme === 'dark' ? '#a3e635' : '#65a30d', stroke: theme === 'dark' ? '#18181b' : '#ffffff', strokeWidth: 1.5 }}
+                    dot={{ fill: theme === 'dark' ? '#a3e635' : '#2563eb', stroke: theme === 'dark' ? '#18181b' : '#ffffff', strokeWidth: 1.5 }}
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>

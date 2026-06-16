@@ -35,16 +35,16 @@ export default function InsightsPanel({ isOpen = false, onClose }: InsightsPanel
 
   return (
     <>
-      {/* Mobile Backdrop Overlay */}
+      {/* Backdrop Overlay for all screen sizes */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 xl:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-black/45 dark:bg-black/65 backdrop-blur-xs z-40 transition-opacity duration-300"
           onClick={onClose}
         />
       )}
       
-      <aside className={`glass-card flex flex-col gap-6 h-screen fixed inset-y-0 right-0 xl:sticky top-0 transition-all duration-300 z-50 xl:z-20 border-l border-black/5 dark:border-white/5 bg-white dark:bg-zinc-950/90 xl:bg-white/30 xl:dark:bg-zinc-950/30 p-6 overflow-y-auto w-80 ${
-        isOpen ? 'translate-x-0' : 'translate-x-full xl:translate-x-0'
+      <aside className={`glass-card flex flex-col gap-6 h-screen fixed inset-y-0 right-0 transition-all duration-305 ease-in-out z-50 border-l border-black/5 dark:border-white/5 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl p-6 overflow-y-auto w-80 shadow-2xl ${
+        isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         
         {/* Title */}
@@ -55,7 +55,7 @@ export default function InsightsPanel({ isOpen = false, onClose }: InsightsPanel
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg border border-black/5 dark:border-white/5 text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white xl:hidden"
+            className="p-1.5 rounded-lg border border-black/5 dark:border-white/5 text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
             title="Close Panel"
           >
             <X className="w-4 h-4" />
@@ -101,7 +101,7 @@ export default function InsightsPanel({ isOpen = false, onClose }: InsightsPanel
               cx="28" 
               cy="28" 
               r="23" 
-              stroke="#a3e635" 
+              stroke="var(--brand-lime)" 
               strokeWidth="4.5" 
               fill="transparent" 
               strokeDasharray={2 * Math.PI * 23}
