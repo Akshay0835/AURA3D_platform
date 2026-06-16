@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-obsidian-950: #09090b;
+  --color-obsidian-900: #121214;
+  --color-obsidian-800: #1a1a1e;
+  --color-obsidian-700: #2a2a32;
+  
+  --color-brand-lime: #a3e635;
+  --color-brand-cyan: #06b6d4;
+  
+  --color-accent-lime: #84cc16;
+  --color-accent-cyan: #0891b2;
+}
+
+:root {
+  --background: #fbfbfb;
+  --foreground: #09090b;
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --glass-blur: 16px;
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --card-bg: rgba(18, 18, 20, 0.6);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Premium glassmorphic helper utilities */
+.glass-card {
+  background-color: var(--card-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--card-border);
+}
+
+.glass-panel {
+  background-color: rgba(9, 9, 11, 0.02);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-panel {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.25);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.45);
+}
+
+/* ThreeJS Canvas wrapper styling */
+.canvas-container canvas {
+  pointer-events: auto !important;
+}
+
+/* Custom transitions */
+.transition-theme {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
