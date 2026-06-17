@@ -1,18 +1,40 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Salad, Activity, Scale, Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
+import { 
+  Cpu, 
+  Salad, 
+  Activity, 
+  Scale, 
+  Sparkles, 
+  CheckCircle2, 
+  ChevronLeft, 
+  ChevronRight,
+  TrendingUp
+} from 'lucide-react';
 
-const features = [
+interface FeatureItem {
+  id: number;
+  icon: any;
+  title: string;
+  tagline: string;
+  description: string;
+  accent: string;
+  color: string;
+  bullets: string[];
+  mockup: React.ReactNode;
+}
+
+const features: FeatureItem[] = [
   {
     id: 0,
     icon: Cpu,
     title: "AI Workout Generator",
     tagline: "PERSONALIZED REPS & SETS",
     description: "Get a highly customized program tailored to your body metrics, strength levels, and current equipment parameters.",
-    accent: "text-lime-600 dark:text-brand-lime bg-brand-lime/10 border-brand-lime/30 dark:border-brand-lime/20",
-    color: "#a3e635",
+    accent: "text-brand-lime border-brand-lime/20 bg-brand-lime/10",
+    color: "#ccff00",
     bullets: ["Biometric muscle load checks", "Progressive overload trackers", "Flexible equipment adjustments"],
     mockup: (
       <div className="space-y-3.5 p-4 sm:p-6 bg-white dark:bg-zinc-900/60 rounded-2xl border border-black/5 dark:border-white/5 relative overflow-hidden h-full flex flex-col justify-between text-left">
@@ -50,7 +72,7 @@ const features = [
     title: "AI Meal Planner",
     tagline: "INTELLIGENT CALORIC DEFICITS",
     description: "Input target macros and dietary limitations. Our AI engine builds recipes matched to your metabolic rate.",
-    accent: "text-cyan-600 dark:text-brand-cyan bg-brand-cyan/10 border-brand-cyan/30 dark:border-brand-cyan/20",
+    accent: "text-brand-cyan border-brand-cyan/20 bg-brand-cyan/10",
     color: "#06b6d4",
     bullets: ["Custom calorie deficit margins", "Protein synthesis optimization", "Automated shopping checklists"],
     mockup: (
@@ -63,19 +85,19 @@ const features = [
 
         <div className="grid grid-cols-3 gap-1.5 sm:gap-3 my-3">
           <div className="p-1.5 sm:p-3 rounded-xl bg-zinc-100 dark:bg-zinc-950/60 border border-black/5 dark:border-white/5 text-center">
-            <span className="text-[10px] text-zinc-500 block">Protein</span>
+            <span className="text-[10px] text-zinc-550 block">Protein</span>
             <span className="text-sm font-mono font-bold text-lime-600 dark:text-brand-lime mt-1 block">150g</span>
-            <span className="text-[8px] text-zinc-500 font-mono block whitespace-nowrap">(600 kcal)</span>
+            <span className="text-[8px] text-zinc-550 font-mono block whitespace-nowrap">(600 kcal)</span>
           </div>
           <div className="p-1.5 sm:p-3 rounded-xl bg-zinc-100 dark:bg-zinc-950/60 border border-black/5 dark:border-white/5 text-center">
-            <span className="text-[10px] text-zinc-500 block">Carbs</span>
+            <span className="text-[10px] text-zinc-550 block">Carbs</span>
             <span className="text-sm font-mono font-bold text-cyan-600 dark:text-brand-cyan mt-1 block">220g</span>
-            <span className="text-[8px] text-zinc-500 font-mono block whitespace-nowrap">(880 kcal)</span>
+            <span className="text-[8px] text-zinc-550 font-mono block whitespace-nowrap">(880 kcal)</span>
           </div>
           <div className="p-1.5 sm:p-3 rounded-xl bg-zinc-100 dark:bg-zinc-950/60 border border-black/5 dark:border-white/5 text-center">
-            <span className="text-[10px] text-zinc-500 block">Fats</span>
-            <span className="text-sm font-mono font-bold text-pink-650 dark:text-pink-400 mt-1 block">75g</span>
-            <span className="text-[8px] text-zinc-500 font-mono block whitespace-nowrap">(675 kcal)</span>
+            <span className="text-[10px] text-zinc-550 block">Fats</span>
+            <span className="text-sm font-mono font-bold text-pink-500 dark:text-pink-450 mt-1 block">75g</span>
+            <span className="text-[8px] text-zinc-550 font-mono block whitespace-nowrap">(675 kcal)</span>
           </div>
         </div>
 
@@ -98,7 +120,7 @@ const features = [
     title: "Workout Tracking",
     tagline: "ACTIVE METRIC RECORDING",
     description: "A gorgeous running interface mapping set completions, active workout timers, and progressive volume totals in real time.",
-    accent: "text-pink-600 dark:text-pink-400 bg-pink-400/10 border-pink-400/30 dark:border-pink-400/20",
+    accent: "text-pink-400 border-pink-500/20 bg-pink-500/10",
     color: "#ec4899",
     bullets: ["Live running session clocks", "Interactive sets completion", "Historical logs archiving"],
     mockup: (
@@ -106,7 +128,7 @@ const features = [
         <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 blur-2xl rounded-full" />
         <div className="flex justify-between items-start gap-2">
           <div className="space-y-1">
-            <span className="text-[9px] font-mono text-pink-600 dark:text-pink-400 font-bold uppercase tracking-widest block">LIVE LOGGER</span>
+            <span className="text-[9px] font-mono text-pink-650 dark:text-pink-400 font-bold uppercase tracking-widest block">LIVE LOGGER</span>
             <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">Push Day Active</h4>
           </div>
           <div className="px-2 py-0.5 sm:px-3 sm:py-1 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-lime-600 dark:text-brand-lime font-mono text-[10px] sm:text-xs font-bold border border-black/5 dark:border-brand-lime/20 animate-pulse shrink-0">
@@ -143,14 +165,14 @@ const features = [
     title: "BMI Analysis",
     tagline: "PRECISE PHYSICAL COMPOSITION",
     description: "Enter your height and weight to view metric calculations synced against historical timelines, complete with fitness category goals.",
-    accent: "text-purple-600 dark:text-purple-400 bg-purple-400/10 border-purple-400/30 dark:border-purple-400/20",
+    accent: "text-purple-400 border-purple-500/20 bg-purple-500/10",
     color: "#a855f7",
     bullets: ["Biometric indexes calculations", "Historical changes plots", "Tailored category recommendations"],
     mockup: (
       <div className="space-y-3.5 p-4 sm:p-6 bg-white dark:bg-zinc-900/60 rounded-2xl border border-black/5 dark:border-white/5 relative overflow-hidden h-full flex flex-col justify-between text-left">
         <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 blur-2xl rounded-full" />
         <div className="space-y-1">
-          <span className="text-[9px] font-mono text-purple-600 dark:text-purple-400 font-bold uppercase tracking-widest block">BIOMETRICS CHECK</span>
+          <span className="text-[9px] font-mono text-purple-650 dark:text-purple-400 font-bold uppercase tracking-widest block">BIOMETRICS CHECK</span>
           <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">Current Weight: 78.5 kg</h4>
         </div>
 
@@ -171,7 +193,6 @@ const features = [
             <div className="flex-1 bg-yellow-500" />
             <div className="flex-1 bg-red-500" />
           </div>
-          {/* pointer */}
           <div className="absolute top-2.5 left-[42%] w-2 h-2 bg-white rounded-full border border-black shadow" />
         </div>
       </div>
@@ -183,14 +204,14 @@ const features = [
     title: "Progress Analytics",
     tagline: "COMPREHENSIVE SAAS METRICS",
     description: "Vibrant and interactive dashboards graphing active streaks, weight histories, calories burned, and target completion dates.",
-    accent: "text-amber-600 dark:text-amber-400 bg-amber-400/10 border-amber-400/30 dark:border-amber-400/20",
+    accent: "text-amber-450 border-amber-500/20 bg-amber-500/10",
     color: "#f59e0b",
     bullets: ["Goal tracking multipliers", "Completion rate matrices", "Predicted target dates calculations"],
     mockup: (
       <div className="space-y-3.5 p-4 sm:p-6 bg-white dark:bg-zinc-900/60 rounded-2xl border border-black/5 dark:border-white/5 relative overflow-hidden h-full flex flex-col justify-between text-left">
         <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 blur-2xl rounded-full" />
         <div className="space-y-1">
-          <span className="text-[9px] font-mono text-amber-600 dark:text-amber-400 font-bold uppercase tracking-widest block">TRAJECTORY ENGINE</span>
+          <span className="text-[9px] font-mono text-amber-600 dark:text-amber-450 font-bold uppercase tracking-widest block">TRAJECTORY ENGINE</span>
           <h4 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">Goal Completion Progress</h4>
         </div>
 
@@ -199,7 +220,6 @@ const features = [
             <span className="text-xl sm:text-2xl font-extrabold text-zinc-900 dark:text-white">59%</span>
             <span className="text-[10px] text-zinc-550 block">Target Achieved</span>
           </div>
-          {/* Mock mini radial gauge */}
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 border-lime-600/10 border-t-lime-600 dark:border-brand-lime/10 dark:border-t-brand-lime flex items-center justify-center font-mono text-[10px] font-bold text-lime-600 dark:text-brand-lime shrink-0">
             59%
           </div>
@@ -227,151 +247,230 @@ const features = [
 export default function HorizontalScrollShowcase() {
   const [activeTab, setActiveTab] = useState(0);
   const [progress, setProgress] = useState(0);
-  const autoplayTimer = useRef<any>(null);
+  const [windowWidth, setWindowWidth] = useState(1200);
 
-  // Auto-play timer implementation
+  // Auto-play timer loop
   useEffect(() => {
-    // Reset progress on active tab change
     setProgress(0);
-
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          // Trigger next tab
           setActiveTab((curr) => (curr + 1) % features.length);
           return 0;
         }
-        return prev + 2; // Increment progress (approx 2.5 seconds total duration per tab)
+        return prev + 1.6; // Increment progress (approx 3 seconds per tab)
       });
     }, 50);
 
     return () => clearInterval(interval);
   }, [activeTab]);
 
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
+
+  const handleNext = () => {
+    setActiveTab((prev) => (prev + 1) % features.length);
+  };
+
+  const handlePrev = () => {
+    setActiveTab((prev) => (prev - 1 + features.length) % features.length);
+  };
+
+  // Calculate position styles for circular 3D stacked deck
+  const getCardStyles = (idx: number) => {
+    let diff = idx - activeTab;
+    const count = features.length;
+    
+    // Wrap around offsets correctly
+    if (diff > count / 2) diff -= count;
+    if (diff < -count / 2) diff += count;
+
+    const absDiff = Math.abs(diff);
+    
+    // Responsive translations
+    const xOffset = isMobile ? 36 : 170;
+    const zOffset = isMobile ? -45 : -90;
+    
+    const x = diff * xOffset;
+    const z = absDiff * zOffset;
+    const scale = 1 - absDiff * 0.11;
+    const rotateY = -diff * (isMobile ? 12 : 22);
+    const opacity = absDiff === 0 ? 1 : absDiff === 1 ? 0.65 : 0.18;
+    const zIndex = 30 - absDiff * 10;
+    const isActive = diff === 0;
+
+    return {
+      x,
+      z,
+      scale,
+      rotateY,
+      opacity,
+      zIndex,
+      isActive
+    };
+  };
+
   return (
     <div className="py-24 bg-zinc-50/30 dark:bg-zinc-950/20 max-w-7xl mx-auto px-6 w-full relative">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="space-y-12 text-center">
+        
+        {/* Section Header */}
+        <div className="space-y-3 max-w-2xl mx-auto">
+          <span className="text-brand-lime font-mono text-xs font-bold tracking-widest uppercase block">Interactive Showcase</span>
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white">
+            Engineered for <span className="text-brand-lime text-outline-lime">Performance</span>
+          </h2>
+          <p className="text-zinc-500 text-xs leading-relaxed uppercase tracking-wider font-bold">
+            Explore the advanced telemetry interfaces designed to maximize physical outcomes.
+          </p>
+        </div>
 
-        {/* Left Side: Text controls list (5 Columns) */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="space-y-2">
-            <span className="text-lime-600 dark:text-brand-lime font-mono text-sm tracking-widest uppercase block">Feature Portfolio</span>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight text-left">
-              Engineered for Physical Performance
-            </h2>
+        {/* 3D Stack Slider Wrapper */}
+        <div className="relative w-full h-[320px] md:h-[400px] flex items-center justify-center overflow-visible mt-8">
+          
+          {/* Navigation Arrows */}
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-2 md:px-12 pointer-events-none z-40">
+            <button 
+              onClick={handlePrev}
+              className="w-11 h-11 rounded-xl bg-black/90 border border-white/5 hover:border-brand-lime flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer pointer-events-auto shadow-2xl"
+              title="Previous slide"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={handleNext}
+              className="w-11 h-11 rounded-xl bg-black/90 border border-white/5 hover:border-brand-lime flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer pointer-events-auto shadow-2xl"
+              title="Next slide"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
 
-          <div className="space-y-3 pt-4">
+          {/* 3D Stack container */}
+          <div 
+            className="w-full max-w-md h-full relative flex items-center justify-center"
+            style={{ perspective: 1200, transformStyle: 'preserve-3d' }}
+          >
             {features.map((feat) => {
-              const isActive = activeTab === feat.id;
-              const Icon = feat.icon;
-
+              const styles = getCardStyles(feat.id);
+              
               return (
-                <button
+                <motion.div
                   key={feat.id}
-                  onClick={() => {
-                    setActiveTab(feat.id);
-                    setProgress(0);
+                  style={{
+                    transformStyle: 'preserve-3d',
                   }}
-                  className={`w-full text-left p-4.5 rounded-2xl border transition-all duration-300 relative overflow-hidden flex items-start gap-4 select-none ${isActive
-                      ? 'bg-zinc-100/80 dark:bg-zinc-900/40 border-black/10 dark:border-white/10 text-zinc-900 dark:text-white'
-                      : 'bg-transparent border-transparent text-zinc-500 dark:text-zinc-400 hover:bg-black/2 hover:text-zinc-900 dark:hover:bg-white/2 dark:hover:text-zinc-200'
-                    }`}
+                  animate={{
+                    x: styles.x,
+                    z: styles.z,
+                    scale: styles.scale,
+                    rotateY: styles.rotateY,
+                    opacity: styles.opacity,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 90,
+                    damping: 18
+                  }}
+                  onClick={() => styles.isActive ? null : setActiveTab(feat.id)}
+                  className={`absolute w-[290px] sm:w-[325px] md:w-[370px] aspect-[4/3] rounded-3xl bg-zinc-950/90 border border-white/10 shadow-2xl overflow-hidden backdrop-blur-md ${
+                    styles.isActive ? 'cursor-default ring-1 ring-brand-lime/30' : 'cursor-pointer'
+                  } z-${styles.zIndex}`}
                 >
-                  {/* Active background indicator timer */}
-                  {isActive && (
-                    <motion.div
-                      className="absolute bottom-0 left-0 h-[2px] bg-lime-600 dark:bg-brand-lime"
-                      style={{ width: `${progress}%` }}
-                    />
+                  {/* Subtle color highlight in the background of active card */}
+                  {styles.isActive && (
+                    <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/80 pointer-events-none" />
                   )}
 
-                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${isActive ? feat.accent : 'bg-zinc-100 dark:bg-zinc-900/50 border-black/5 dark:border-white/5'
-                    }`}>
-                    <Icon className="w-5 h-5" />
+                  <div className="w-full h-full p-2 select-none pointer-events-none">
+                    {feat.mockup}
                   </div>
-
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-bold tracking-wide">{feat.title}</h4>
-                    {isActive && (
-                      <motion.p
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed max-w-sm mt-1"
-                      >
-                        {feat.description}
-                      </motion.p>
-                    )}
-                  </div>
-
-                  <ChevronRight className={`w-4 h-4 ml-auto self-center shrink-0 transition-transform ${isActive ? 'rotate-90 text-lime-600 dark:text-brand-lime' : 'text-zinc-600'
-                    }`} />
-                </button>
+                </motion.div>
               );
             })}
           </div>
+
         </div>
 
-        {/* Right Side: Animated Mockup canvas (7 Columns) */}
-        <div className="lg:col-span-7 w-full h-[380px] md:h-[450px]">
-          <div className="w-full h-full glass-card rounded-3xl border border-black/5 dark:border-white/5 relative overflow-hidden flex items-center justify-center p-4 sm:p-8 bg-zinc-100/50 dark:bg-zinc-950/10">
-
-            {/* Ambient glows inside mock dashboard wrapper */}
-            <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-white dark:to-zinc-950/80 pointer-events-none" />
-            <div className="absolute top-1/4 left-1/4 w-48 h-48 rounded-full bg-brand-cyan/5 blur-3xl" />
-            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-brand-lime/5 blur-3xl" />
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, rotateY: -30, scale: 0.96, y: 15 }}
-                animate={{ opacity: 1, rotateY: 0, scale: 1, y: 0 }}
-                exit={{ opacity: 0, rotateY: 30, scale: 0.96, y: -15 }}
-                transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
-                style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-                className="w-full max-w-md h-full flex flex-col justify-center"
+        {/* Telemetry Tabs Selector (glowing horizontal pills) */}
+        <div className="flex flex-wrap gap-2.5 md:gap-3.5 justify-center max-w-3xl mx-auto pt-6 z-30 relative">
+          {features.map((feat) => {
+            const isActive = activeTab === feat.id;
+            const Icon = feat.icon;
+            
+            return (
+              <button
+                key={feat.id}
+                onClick={() => setActiveTab(feat.id)}
+                className={`relative px-4 py-2 rounded-xl text-[9px] md:text-[10px] font-mono font-bold tracking-wider uppercase border transition-all cursor-pointer flex items-center gap-1.5 overflow-hidden ${
+                  isActive 
+                    ? 'border-brand-lime bg-brand-lime/10 text-brand-lime' 
+                    : 'border-white/5 bg-zinc-950/40 text-zinc-550 hover:border-white/15 hover:text-zinc-300'
+                }`}
               >
-                <div className="space-y-4">
-                  {/* Detailed visual wrapper */}
-                  {features[activeTab].mockup}
+                <Icon className="w-3.5 h-3.5" />
+                <span>{feat.title}</span>
 
-                  {/* Highlight key highlights */}
-                  <motion.div 
-                    initial="hidden"
-                    animate="visible"
-                    variants={{
-                      hidden: {},
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.08
-                        }
-                      }
-                    }}
-                    className="flex flex-wrap gap-2 justify-center"
+                {/* Pill loading progress indicator line */}
+                {isActive && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 h-[2px] bg-brand-lime"
+                    style={{ width: `${progress}%` }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Glassmorphic diagnostics HUD details console */}
+        <div className="w-full max-w-4xl mx-auto p-6 md:p-8 rounded-3xl border border-white/5 bg-zinc-950/40 relative overflow-hidden text-center flex flex-col items-center justify-center space-y-4 backdrop-blur-md">
+          {/* subtle scan lines */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(204,255,0,0.003)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none" />
+          
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="space-y-4"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <TrendingUp className="w-3.5 h-3.5 text-brand-lime animate-pulse" />
+                <span className="text-brand-lime font-mono text-[10px] font-bold tracking-widest uppercase block">
+                  {features[activeTab].tagline}
+                </span>
+              </div>
+
+              <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
+                {features[activeTab].title}
+              </h3>
+              
+              <p className="text-zinc-400 text-xs md:text-sm max-w-2xl mx-auto leading-relaxed font-medium">
+                {features[activeTab].description}
+              </p>
+
+              {/* micro-chip bullets highlight */}
+              <div className="flex flex-wrap gap-2 justify-center pt-2">
+                {features[activeTab].bullets.map((bullet, idx) => (
+                  <span
+                    key={idx}
+                    className="text-[9px] font-black text-zinc-500 bg-zinc-950 border border-white/5 px-3 py-1.5 rounded-full uppercase"
                   >
-                    {features[activeTab].bullets.map((bullet, index) => (
-                      <motion.span
-                        key={index}
-                        variants={{
-                          hidden: { opacity: 0, y: 10, scale: 0.9 },
-                          visible: { 
-                            opacity: 1, 
-                            y: 0, 
-                            scale: 1,
-                            transition: { type: "spring", stiffness: 300, damping: 20 }
-                          }
-                        }}
-                        className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 px-2.5 py-1 rounded-full uppercase"
-                      >
-                        {bullet}
-                      </motion.span>
-                    ))}
-                  </motion.div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-          </div>
+                    {bullet}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
       </div>

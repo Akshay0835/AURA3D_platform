@@ -31,16 +31,16 @@
 }
 
 .dark {
-  --background: #09090b;
+  --background: #050505;
   --foreground: #f4f4f5;
-  --card-bg: rgba(18, 18, 20, 0.6);
-  --card-border: rgba(255, 255, 255, 0.08);
+  --card-bg: rgba(10, 10, 12, 0.85);
+  --card-border: rgba(255, 255, 255, 0.05);
   
-  --brand-lime: #a3e635;          /* Bright neon lime for dark mode */
-  --brand-cyan: #06b6d4;          /* Bright neon cyan for dark mode */
-  --brand-lime-accent: #84cc16;
+  --brand-lime: #ccff00;          /* Bright AURA 3D neon lime/green */
+  --brand-cyan: #06b6d4;          
+  --brand-lime-accent: #b2dd00;
   --brand-cyan-accent: #0891b2;
-  --brand-lime-rgb: 163, 230, 53;
+  --brand-lime-rgb: 204, 255, 0;
   --brand-cyan-rgb: 6, 182, 212;
 }
 
@@ -206,6 +206,25 @@ body {
 
 .animate-float-slow {
   animation: float-slow 12s infinite ease-in-out;
+}
+
+@keyframes infinite-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-infinite-scroll {
+  animation: infinite-scroll 30s linear infinite;
+}
+
+.text-outline-lime {
+  -webkit-text-stroke: 1.5px #ccff00;
+  color: transparent;
+}
+
+.text-outline-white {
+  -webkit-text-stroke: 1.5px #ffffff;
+  color: transparent;
 }
 
 

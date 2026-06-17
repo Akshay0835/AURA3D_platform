@@ -42,7 +42,7 @@ export default function CoachDemoWidget() {
       </div>
 
       {/* Chat History Panel */}
-      <div className="p-6 space-y-6 min-h-[440px] flex flex-col justify-end bg-gradient-to-b from-transparent to-zinc-50/30 dark:to-zinc-950/40">
+      <div className="p-6 space-y-6 h-[480px] flex flex-col justify-end overflow-y-auto bg-gradient-to-b from-transparent to-zinc-50/30 dark:to-zinc-950/40">
         
         {/* User Message (always visible or animated from stage 0) */}
         {step >= 0 && (
