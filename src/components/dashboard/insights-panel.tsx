@@ -75,7 +75,7 @@ export default function InsightsPanel({ isOpen = false, onClose }: InsightsPanel
             <span className="text-[10px] font-mono font-bold text-brand-lime uppercase tracking-wider block mb-1">Active Routine</span>
             <h4 className="text-sm font-bold text-zinc-900 dark:text-white truncate">{activeRoutine.name}</h4>
             <div className="flex justify-between items-center mt-3">
-              <span className="text-xs font-mono font-semibold text-zinc-650 dark:text-zinc-300">Timer: {formatTimer(liveWorkoutTimer)}</span>
+              <span className="text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-300">Timer: {formatTimer(liveWorkoutTimer)}</span>
               <Link 
                 href="/dashboard/workout"
                 className="text-[10px] font-bold text-black bg-brand-lime px-2.5 py-1 rounded-lg flex items-center gap-1 hover:opacity-90"
@@ -92,7 +92,7 @@ export default function InsightsPanel({ isOpen = false, onClose }: InsightsPanel
         <div className="space-y-1">
           <span className="text-[10px] font-mono text-zinc-500 font-bold uppercase tracking-wider block">Energy Burned</span>
           <h4 className="text-xl font-bold text-zinc-900 dark:text-white">{user.caloriesBurnedToday} kcal</h4>
-          <span className="text-[10px] text-zinc-550 dark:text-zinc-400 font-medium block">Goal: {user.caloriesBurnedGoal} kcal</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium block">Goal: {user.caloriesBurnedGoal} kcal</span>
         </div>
         <div className="relative w-14 h-14 flex items-center justify-center">
           <svg className="w-full h-full transform -rotate-90">
@@ -259,7 +259,7 @@ export default function InsightsPanel({ isOpen = false, onClose }: InsightsPanel
         </div>
         <div className="overflow-hidden">
           <h6 className="text-xs font-bold text-zinc-800 dark:text-zinc-200">Active Streak Master</h6>
-          <p className="text-[10px] text-zinc-550 dark:text-zinc-500">14 days and counting!</p>
+          <p className="text-[10px] text-zinc-500 dark:text-zinc-500">14 days and counting!</p>
         </div>
       </div>
       </aside>

@@ -102,11 +102,11 @@ const features: FeatureItem[] = [
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center text-[10px] text-zinc-650 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-950/40 p-2 rounded-lg">
+          <div className="flex justify-between items-center text-[10px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-950/40 p-2 rounded-lg">
             <span>Breakfast Omelette</span>
             <span>450 kcal</span>
           </div>
-          <div className="flex justify-between items-center text-[10px] text-zinc-650 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-950/40 p-2 rounded-lg">
+          <div className="flex justify-between items-center text-[10px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-950/40 p-2 rounded-lg">
             <span>Grilled Salmon & Quinoa</span>
             <span>680 kcal</span>
           </div>
@@ -225,7 +225,7 @@ const features: FeatureItem[] = [
           </div>
         </div>
 
-        <div className="border-t border-black/5 dark:border-white/5 pt-3 space-y-1 sm:space-y-1.5 text-[10px] text-zinc-650 dark:text-zinc-400">
+        <div className="border-t border-black/5 dark:border-white/5 pt-3 space-y-1 sm:space-y-1.5 text-[10px] text-zinc-600 dark:text-zinc-400">
           <div className="flex justify-between">
             <span>Starting weight:</span>
             <span>85.0 kg</span>
@@ -340,6 +340,7 @@ export default function HorizontalScrollShowcase() {
               onClick={handlePrev}
               className="w-11 h-11 rounded-xl bg-black/90 border border-white/5 hover:border-brand-lime flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer pointer-events-auto shadow-2xl"
               title="Previous slide"
+              aria-label="Previous slide"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -347,6 +348,7 @@ export default function HorizontalScrollShowcase() {
               onClick={handleNext}
               className="w-11 h-11 rounded-xl bg-black/90 border border-white/5 hover:border-brand-lime flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer pointer-events-auto shadow-2xl"
               title="Next slide"
+              aria-label="Next slide"
             >
               <ChevronRight className="w-5 h-5" />
             </button>

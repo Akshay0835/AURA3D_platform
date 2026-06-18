@@ -13,6 +13,8 @@
   
   --color-accent-lime: var(--brand-lime-accent);
   --color-accent-cyan: var(--brand-cyan-accent);
+  
+  --font-display: var(--font-space-grotesk), sans-serif;
 }
 
 :root {

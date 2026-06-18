@@ -22,6 +22,180 @@ import {
   Loader2
 } from 'lucide-react';
 
+// Telemetry Exercise Card with rep/set/weight counters
+interface TelemetryExerciseCardProps {
+  exercise: {
+    id: string;
+    name: string;
+    sets: number;
+    reps: number;
+    weight: number;
+  };
+  idx: number;
+  routineId: string;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+}
+
+function TelemetryExerciseCard({ 
+  exercise, 
+  idx, 
+  routineId, 
+  onMoveUp, 
+  onMoveDown, 
+  canMoveUp, 
+  canMoveDown 
+}: TelemetryExerciseCardProps) {
+  const { routines } = useAppStore();
+
+  const updateVal = (field: 'sets' | 'reps' | 'weight', change: number) => {
+    const updated = routines.map((r) => {
+      if (r.id === routineId) {
+        const exercises = r.exercises.map((ex) => {
+          if (ex.id === exercise.id) {
+            const newVal = Math.max(1, (ex[field] || 0) + change);
+            // If sets changed, we also need to adjust completedSets array length
+            let completedSets = [...ex.completedSets];
+            if (field === 'sets') {
+              if (newVal > ex.sets) {
+                completedSets = [...completedSets, ...Array(newVal - ex.sets).fill(false)];
+              } else if (newVal < ex.sets) {
+                completedSets = completedSets.slice(0, newVal);
+              }
+            }
+            return {
+              ...ex,
+              [field]: newVal,
+              completedSets
+            };
+          }
+          return ex;
+        });
+        return { ...r, exercises };
+      }
+      return r;
+    });
+    useAppStore.setState({ routines: updated });
+  };
+
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/30 border border-black/5 dark:border-white/5 hover:border-brand-lime/20 dark:hover:border-brand-lime/20 transition-all duration-300 relative group shadow-sm">
+      {/* Index marker */}
+      <div className="absolute top-2 left-2 text-[8px] font-mono text-zinc-400 dark:text-zinc-650 tracking-wider">
+        EX_ID_0{idx + 1}
+      </div>
+
+      <div className="flex items-start gap-3 mt-2 sm:mt-0">
+        <span className="w-7 h-7 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-xs font-mono font-black text-zinc-650 dark:text-zinc-400 border border-black/5 dark:border-white/5 shadow-inner">
+          {idx + 1}
+        </span>
+        <div className="text-left">
+          <h5 className="text-xs font-black text-zinc-855 dark:text-zinc-250 uppercase tracking-wide flex items-center gap-1.5">
+            <Dumbbell className="w-3.5 h-3.5 text-zinc-400 group-hover:rotate-45 transition-transform duration-300" />
+            {exercise.name}
+          </h5>
+          <span className="text-[9px] text-zinc-550 dark:text-zinc-550 font-mono font-bold uppercase tracking-wider">
+            {exercise.sets}s × {exercise.reps}r @ {exercise.weight}kg
+          </span>
+        </div>
+      </div>
+
+      {/* Telemetry Numeric Dial Counters */}
+      <div className="flex flex-wrap items-center gap-4 mt-3 sm:mt-0 font-mono text-[9px]">
+        {/* Sets dial */}
+        <div className="flex flex-col items-center gap-1 bg-black/5 dark:bg-zinc-950/40 px-2.5 py-1.5 rounded-xl border border-black/5 dark:border-white/5 shadow-inner">
+          <span className="text-zinc-450 dark:text-zinc-500 text-[8px] uppercase tracking-wider font-bold">Sets</span>
+          <div className="flex items-center gap-1.5">
+            <button 
+              type="button"
+              onClick={() => updateVal('sets', -1)}
+              className="w-4.5 h-4.5 rounded bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center font-bold text-zinc-650 hover:bg-zinc-300 dark:hover:bg-zinc-800 active:scale-90 select-none cursor-pointer"
+            >
+              -
+            </button>
+            <span className="w-4 text-center font-bold text-zinc-800 dark:text-zinc-250">{exercise.sets}</span>
+            <button 
+              type="button"
+              onClick={() => updateVal('sets', 1)}
+              className="w-4.5 h-4.5 rounded bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center font-bold text-zinc-650 hover:bg-zinc-300 dark:hover:bg-zinc-800 active:scale-90 select-none cursor-pointer"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* Reps dial */}
+        <div className="flex flex-col items-center gap-1 bg-black/5 dark:bg-zinc-950/40 px-2.5 py-1.5 rounded-xl border border-black/5 dark:border-white/5 shadow-inner">
+          <span className="text-zinc-450 dark:text-zinc-500 text-[8px] uppercase tracking-wider font-bold">Reps</span>
+          <div className="flex items-center gap-1.5">
+            <button 
+              type="button"
+              onClick={() => updateVal('reps', -1)}
+              className="w-4.5 h-4.5 rounded bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center font-bold text-zinc-650 hover:bg-zinc-300 dark:hover:bg-zinc-800 active:scale-90 select-none cursor-pointer"
+            >
+              -
+            </button>
+            <span className="w-4 text-center font-bold text-zinc-800 dark:text-zinc-250">{exercise.reps}</span>
+            <button 
+              type="button"
+              onClick={() => updateVal('reps', 1)}
+              className="w-4.5 h-4.5 rounded bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center font-bold text-zinc-650 hover:bg-zinc-300 dark:hover:bg-zinc-800 active:scale-90 select-none cursor-pointer"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* Weight dial */}
+        <div className="flex flex-col items-center gap-1 bg-black/5 dark:bg-zinc-950/40 px-2.5 py-1.5 rounded-xl border border-black/5 dark:border-white/5 shadow-inner">
+          <span className="text-zinc-450 dark:text-zinc-500 text-[8px] uppercase tracking-wider font-bold">Load (kg)</span>
+          <div className="flex items-center gap-1.5">
+            <button 
+              type="button"
+              onClick={() => updateVal('weight', -2.5)}
+              className="w-7 h-4.5 rounded bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center font-bold text-[8px] text-zinc-650 hover:bg-zinc-300 dark:hover:bg-zinc-800 active:scale-90 select-none cursor-pointer"
+            >
+              -2.5
+            </button>
+            <span className="w-8 text-center font-bold text-zinc-800 dark:text-zinc-250">{exercise.weight}</span>
+            <button 
+              type="button"
+              onClick={() => updateVal('weight', 2.5)}
+              className="w-7 h-4.5 rounded bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center font-bold text-[8px] text-zinc-650 hover:bg-zinc-300 dark:hover:bg-zinc-800 active:scale-90 select-none cursor-pointer"
+            >
+              +2.5
+            </button>
+          </div>
+        </div>
+
+        {/* Reordering Controls */}
+        <div className="flex gap-1.5 shrink-0 self-end sm:self-center border-l border-black/10 dark:border-white/5 pl-4 ml-1">
+          <button
+            type="button"
+            onClick={onMoveUp}
+            disabled={!canMoveUp}
+            className="p-1.5 text-zinc-500 hover:text-black dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg disabled:opacity-20 transition-colors cursor-pointer"
+            title="Move Up"
+          >
+            <ArrowUp className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={onMoveDown}
+            disabled={!canMoveDown}
+            className="p-1.5 text-zinc-500 hover:text-black dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg disabled:opacity-20 transition-colors cursor-pointer"
+            title="Move Down"
+          >
+            <ArrowDown className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function WorkoutPlannerPage() {
   const { 
     routines, 
@@ -262,33 +436,16 @@ export default function WorkoutPlannerPage() {
                   <span className="text-[10px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-3 font-mono">Exercises (Reorder via controls)</span>
                   <div className="space-y-2.5">
                     {selectedRoutine.exercises.map((ex, idx) => (
-                      <div key={ex.id} className="flex items-center justify-between p-3 rounded-xl bg-zinc-100/30 dark:bg-zinc-900/30 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 rounded-lg bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-xs font-mono font-bold text-zinc-500 dark:text-zinc-400">{idx + 1}</span>
-                          <div>
-                            <h5 className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{ex.name}</h5>
-                            <span className="text-[10px] text-zinc-550 dark:text-zinc-500 font-mono font-semibold">{ex.sets} sets x {ex.reps} reps @ {ex.weight}kg</span>
-                          </div>
-                        </div>
-
-                        {/* Reordering Controls */}
-                        <div className="flex gap-1 shrink-0">
-                          <button
-                            onClick={() => reorderRoutineExercises(selectedRoutine.id, idx, idx - 1)}
-                            disabled={idx === 0}
-                            className="p-1 text-zinc-500 hover:text-black dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded disabled:opacity-20"
-                          >
-                            <ArrowUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => reorderRoutineExercises(selectedRoutine.id, idx, idx + 1)}
-                            disabled={idx === selectedRoutine.exercises.length - 1}
-                            className="p-1 text-zinc-500 hover:text-black dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded disabled:opacity-20"
-                          >
-                            <ArrowDown className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
+                      <TelemetryExerciseCard
+                        key={ex.id}
+                        exercise={ex}
+                        idx={idx}
+                        routineId={selectedRoutine.id}
+                        onMoveUp={() => reorderRoutineExercises(selectedRoutine.id, idx, idx - 1)}
+                        onMoveDown={() => reorderRoutineExercises(selectedRoutine.id, idx, idx + 1)}
+                        canMoveUp={idx > 0}
+                        canMoveDown={idx < selectedRoutine.exercises.length - 1}
+                      />
                     ))}
                   </div>
                 </div>

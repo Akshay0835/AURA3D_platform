@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAppStore } from '@/store/useAppStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -130,10 +131,12 @@ export default function ProfilePage() {
             <div className="absolute -right-24 -top-24 w-52 h-52 bg-brand-lime/10 blur-3xl rounded-full" />
             
             <div className="flex flex-col sm:flex-row items-center gap-5">
-              <img 
+              <Image 
                 src={user.avatar} 
                 alt={user.name}
-                className="w-20 h-20 rounded-full border-2 border-brand-lime/40 object-cover shrink-0"
+                width={80}
+                height={80}
+                className="rounded-full border-2 border-brand-lime/40 object-cover shrink-0"
               />
               <div className="text-center sm:text-left space-y-1 overflow-hidden">
                 <h2 className="text-xl font-bold text-zinc-900 dark:text-white tracking-wide">{user.name}</h2>
@@ -245,60 +248,71 @@ export default function ProfilePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-3 gap-2.5">
                 <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Age (yrs)</label>
+                  <label className="text-[9px] font-mono text-zinc-550 dark:text-zinc-500 font-bold uppercase tracking-wider block mb-1.5">Age (yrs)</label>
                   <input
                     type="number"
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-3 py-2 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs font-bold text-zinc-850 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 shadow-inner"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Height (cm)</label>
+                  <label className="text-[9px] font-mono text-zinc-550 dark:text-zinc-500 font-bold uppercase tracking-wider block mb-1.5">Height (cm)</label>
                   <input
                     type="number"
                     value={height}
                     onChange={(e) => setHeight(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-3 py-2 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900"
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs font-bold text-zinc-855 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 shadow-inner"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] font-mono text-zinc-550 dark:text-zinc-500 font-bold uppercase tracking-wider block mb-1.5">Weight (kg)</label>
+                  <input
+                    type="number"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs font-bold text-zinc-855 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 shadow-inner"
                     required
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2.5">
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Weight (kg)</label>
-                  <input
-                    type="number"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900"
-                    required
-                  />
+              {/* Tactile weight target slider */}
+              <div className="space-y-1 bg-black/5 dark:bg-zinc-950/40 p-3.5 rounded-2xl border border-black/5 dark:border-white/5 shadow-inner">
+                <div className="flex justify-between font-mono text-[9px] font-bold text-zinc-550 dark:text-zinc-400">
+                  <span>WEIGHT TARGET SPECIFICATION</span>
+                  <span className="text-brand-cyan font-black">{targetWeight} kg</span>
                 </div>
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Target Weight</label>
-                  <input
-                    type="number"
-                    value={targetWeight}
-                    onChange={(e) => setTargetWeight(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900"
-                    required
-                  />
+                <input
+                  type="range"
+                  min="45"
+                  max="130"
+                  step="0.5"
+                  value={targetWeight}
+                  onChange={(e) => setTargetWeight(e.target.value)}
+                  className="w-full h-1 bg-zinc-200 dark:bg-zinc-900 rounded-lg appearance-none cursor-pointer accent-brand-cyan"
+                />
+              </div>
+
+              {/* Tactile Calorie target slider */}
+              <div className="space-y-1 bg-black/5 dark:bg-zinc-950/40 p-3.5 rounded-2xl border border-black/5 dark:border-white/5 shadow-inner">
+                <div className="flex justify-between font-mono text-[9px] font-bold text-zinc-550 dark:text-zinc-400">
+                  <span>DAILY CALORIES LIMIT</span>
+                  <span className="text-brand-lime font-black">{calorieGoal} kcal</span>
                 </div>
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Daily Calories</label>
-                  <input
-                    type="number"
-                    value={calorieGoal}
-                    onChange={(e) => setCalorieGoal(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900"
-                    required
-                  />
-                </div>
+                <input
+                  type="range"
+                  min="1200"
+                  max="4500"
+                  step="50"
+                  value={calorieGoal}
+                  onChange={(e) => setCalorieGoal(e.target.value)}
+                  className="w-full h-1 bg-zinc-200 dark:bg-zinc-900 rounded-lg appearance-none cursor-pointer accent-brand-lime"
+                />
               </div>
 
               {/* Notification Toggles */}

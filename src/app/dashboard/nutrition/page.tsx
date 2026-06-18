@@ -8,6 +8,9 @@ import { Plus, Trash2, Salad, Sparkles, HelpCircle, Utensils, Droplet, Coffee, P
 export default function NutritionPage() {
   const { foodEntries, user, addFoodEntry, deleteFoodEntry, generateAIMealPlan, addWater } = useAppStore();
 
+  // Drawer Toggle State
+  const [isAddFoodOpen, setIsAddFoodOpen] = useState(false);
+
   // Manual Food Form States
   const [foodName, setFoodName] = useState('');
   const [calories, setCalories] = useState('');
@@ -58,6 +61,7 @@ export default function NutritionPage() {
     setProtein('');
     setCarbs('');
     setFats('');
+    setIsAddFoodOpen(false);
   };
 
   const handleGenerateMealPlan = async (e: React.FormEvent) => {
@@ -78,47 +82,80 @@ export default function NutritionPage() {
     const Icon = icon;
     const sectionCals = entries.reduce((acc, f) => acc + f.calories, 0);
     return (
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-2">
           <div className="flex items-center gap-2">
-            <div className={`w-7 h-7 rounded-lg ${color} bg-opacity-10 border border-opacity-20 flex items-center justify-center`}>
-              <Icon className={`w-4 h-4 ${color}`} />
+            <div className={`w-8 h-8 rounded-xl ${color} bg-opacity-10 border border-opacity-20 flex items-center justify-center shadow-inner`}>
+              <Icon className={`w-4.5 h-4.5 ${color}`} />
             </div>
-            <h4 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">{title}</h4>
+            <h4 className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-wider font-mono">{title}</h4>
           </div>
-          <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 font-bold">{sectionCals} kcal</span>
+          <span className="text-xs font-mono text-zinc-550 dark:text-zinc-400 font-black">{sectionCals} kcal</span>
         </div>
 
         {entries.length > 0 ? (
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {entries.map((entry) => (
               <div 
                 key={entry.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-zinc-100/30 dark:bg-zinc-900/30 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 group transition-colors"
+                className="relative overflow-hidden p-3.5 rounded-2xl bg-white/40 dark:bg-zinc-900/35 border border-black/5 dark:border-white/5 hover:border-brand-cyan/20 dark:hover:border-brand-cyan/20 group/card transition-all duration-300 shadow-sm"
               >
-                <div>
-                  <h5 className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{entry.name}</h5>
-                  <div className="flex items-center gap-2 mt-1 text-[10px] text-zinc-500 font-semibold font-mono">
-                    <span className="text-lime-700 dark:text-brand-lime">P: {entry.protein}g</span>
-                    <span>C: {entry.carbs}g</span>
-                    <span className="text-pink-600 dark:text-pink-400">F: {entry.fats}g</span>
+                {/* Visual Scanning Effect */}
+                <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-brand-cyan/35 opacity-0 group-hover/card:opacity-100 group-hover/card:animate-scan pointer-events-none" />
+                <style>{`
+                  @keyframes scan-animation {
+                    0% { transform: translateY(0); opacity: 0; }
+                    10% { opacity: 1; }
+                    90% { opacity: 1; }
+                    100% { transform: translateY(80px); opacity: 0; }
+                  }
+                  .group\\/card:hover .group-hover\\/card\\:animate-scan {
+                    animation: scan-animation 2.2s linear infinite;
+                  }
+                `}</style>
+
+                <div className="flex justify-between items-start">
+                  <div className="text-left">
+                    <span className="text-[7.5px] font-mono text-zinc-450 dark:text-zinc-600 block">ID: {entry.id.substring(0, 8)}</span>
+                    <h5 className="text-xs font-extrabold text-zinc-800 dark:text-zinc-200 mt-0.5 uppercase tracking-wide">{entry.name}</h5>
+                    
+                    {/* Macro details printout */}
+                    <div className="flex items-center gap-2.5 mt-2.5 text-[9px] font-mono font-bold">
+                      <span className="text-lime-700 dark:text-brand-lime">P: {entry.protein}g</span>
+                      <span className="text-zinc-500">C: {entry.carbs}g</span>
+                      <span className="text-pink-650 dark:text-pink-400">F: {entry.fats}g</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <span className="text-xs font-mono font-extrabold text-zinc-755 dark:text-zinc-200">{entry.calories} <span className="text-[8px] font-medium text-zinc-450">kcal</span></span>
+                    
+                    <button
+                      onClick={() => deleteFoodEntry(entry.id)}
+                      className="p-1 hover:bg-red-500/10 text-zinc-450 hover:text-red-400 rounded-lg transition-colors cursor-pointer"
+                      title="Delete Entry"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300">{entry.calories} kcal</span>
-                  <button
-                    onClick={() => deleteFoodEntry(entry.id)}
-                    className="p-1 hover:bg-red-500/10 hover:text-red-400 text-zinc-500 rounded transition-colors cursor-pointer"
-                    title="Delete Entry"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                
+                {/* Telemetry graphic - faux barcode */}
+                <div className="mt-3.5 flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-2 font-mono text-[7px] text-zinc-400 dark:text-zinc-650">
+                  <span className="uppercase">Diagnostic: OK</span>
+                  <div className="flex gap-0.5 tracking-tighter">
+                    <span className="w-0.5 h-2 bg-brand-cyan/40" />
+                    <span className="w-1 h-2 bg-brand-cyan/20" />
+                    <span className="w-0.5 h-2 bg-brand-cyan/70" />
+                    <span className="w-1.5 h-2 bg-brand-cyan/30" />
+                    <span className="w-0.5 h-2 bg-brand-cyan/60" />
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-[10px] text-zinc-500 italic py-2 pl-9">No entries logged for {title.toLowerCase()}</p>
+          <p className="text-[10px] text-zinc-500 italic py-2 pl-9 font-mono">// NO ENTRIES RECORDED FOR {title.toUpperCase()}</p>
         )}
       </div>
     );
@@ -186,7 +223,15 @@ export default function NutritionPage() {
 
           {/* Grouped Food Entries List */}
           <div className="glass-card p-6 rounded-3xl space-y-6">
-            <h3 className="text-base font-bold text-zinc-900 dark:text-white tracking-wide border-b border-black/5 dark:border-white/5 pb-2">Food Diary</h3>
+            <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-2.5">
+              <h3 className="text-base font-bold text-zinc-900 dark:text-white tracking-wide">Food Diary</h3>
+              <button 
+                onClick={() => setIsAddFoodOpen(true)}
+                className="text-[10px] font-black text-black bg-brand-lime px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98] transition-all font-mono uppercase tracking-widest cursor-pointer shadow-md shadow-brand-lime/10"
+              >
+                <Plus className="w-3.5 h-3.5 text-black" /> Log Custom Food
+              </button>
+            </div>
             
             {renderFoodSection("Breakfast", breakfastEntries, Coffee, "text-amber-500")}
             {renderFoodSection("Lunch", lunchEntries, Salad, "text-lime-700 dark:text-brand-lime")}
@@ -196,96 +241,33 @@ export default function NutritionPage() {
 
         </div>
 
-        {/* Right: Add Food Form & AI Meal Generator (4 columns) */}
+        {/* Right: AI Meal Generator & Target Specs (4 columns) */}
         <div className="lg:col-span-4 space-y-6">
           
-          {/* Manual Food Log Form */}
+          {/* Target Specs Metrics */}
           <div className="glass-card p-6 rounded-3xl space-y-4">
-            <div className="flex items-center gap-2">
-              <Utensils className="w-4.5 h-4.5 text-lime-750 dark:text-brand-lime" />
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Manual Log Entry</h3>
+            <div className="flex items-center gap-2 border-b border-black/5 dark:border-white/5 pb-2">
+              <Salad className="w-4.5 h-4.5 text-brand-lime" />
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide uppercase font-mono">Biometric Targets</h3>
             </div>
-            
-            <form onSubmit={handleAddFood} className="space-y-3">
-              <div>
-                <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Food Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Scrambled Eggs"
-                  value={foodName}
-                  onChange={(e) => setFoodName(e.target.value)}
-                  className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-3 py-2 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-650"
-                  required
-                />
+            <div className="space-y-3 font-mono text-[10px] text-zinc-550 dark:text-zinc-400">
+              <div className="flex justify-between border-b border-black/5 dark:border-white/5 pb-1.5">
+                <span>PROTEIN TARGET</span>
+                <span className="font-extrabold text-zinc-900 dark:text-white">{pGoal}g / day</span>
               </div>
-
-              <div className="grid grid-cols-2 gap-3.5">
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Calories (kcal)</label>
-                  <input
-                    type="number"
-                    placeholder="250"
-                    value={calories}
-                    onChange={(e) => setCalories(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-3 py-2 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-650"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Meal Period</label>
-                  <select
-                    value={mealType}
-                    onChange={(e) => setMealType(e.target.value as any)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-3 py-2 text-xs text-zinc-750 dark:text-zinc-300 focus:outline-none"
-                  >
-                    <option value="Breakfast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Dinner">Dinner</option>
-                    <option value="Snacks">Snack</option>
-                  </select>
-                </div>
+              <div className="flex justify-between border-b border-black/5 dark:border-white/5 pb-1.5">
+                <span>CARBS TARGET</span>
+                <span className="font-extrabold text-zinc-900 dark:text-white">{cGoal}g / day</span>
               </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Protein (g)</label>
-                  <input
-                    type="number"
-                    placeholder="12"
-                    value={protein}
-                    onChange={(e) => setProtein(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-655"
-                  />
-                </div>
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Carbs (g)</label>
-                  <input
-                    type="number"
-                    placeholder="20"
-                    value={carbs}
-                    onChange={(e) => setCarbs(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-655"
-                  />
-                </div>
-                <div>
-                  <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1">Fats (g)</label>
-                  <input
-                    type="number"
-                    placeholder="8"
-                    value={fats}
-                    onChange={(e) => setFats(e.target.value)}
-                    className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-2.5 py-2 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-655"
-                  />
-                </div>
+              <div className="flex justify-between border-b border-black/5 dark:border-white/5 pb-1.5">
+                <span>FATS TARGET</span>
+                <span className="font-extrabold text-zinc-900 dark:text-white">{fGoal}g / day</span>
               </div>
-
-              <button
-                type="submit"
-                className="w-full bg-brand-lime text-black font-semibold text-xs py-3 rounded-xl flex items-center justify-center gap-1 cursor-pointer mt-3"
-              >
-                <Plus className="w-4 h-4 text-black" /> Log Food
-              </button>
-            </form>
+              <div className="flex justify-between">
+                <span>CALORIC GOAL</span>
+                <span className="font-extrabold text-brand-lime">{calGoal} kcal</span>
+              </div>
+            </div>
           </div>
 
           {/* AI Meal Generator Widget */}
@@ -383,6 +365,130 @@ export default function NutritionPage() {
         </div>
 
       </div>
+
+      {/* Custom Drawer: Slide-in Panel for Adding Custom Foods */}
+      <AnimatePresence>
+        {isAddFoodOpen && (
+          <>
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsAddFoodOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 cursor-pointer"
+            />
+            {/* Drawer container */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 240 }}
+              className="fixed right-0 top-0 bottom-0 w-full sm:w-[400px] bg-white dark:bg-zinc-950 border-l border-black/10 dark:border-white/10 p-6 z-55 shadow-2xl flex flex-col justify-between"
+            >
+              <div className="space-y-6">
+                <div className="flex justify-between items-center border-b border-black/5 dark:border-white/5 pb-4">
+                  <div className="flex items-center gap-2">
+                    <Utensils className="w-5 h-5 text-brand-lime" />
+                    <h3 className="text-base font-black text-zinc-900 dark:text-white uppercase tracking-wider font-mono">Log Custom Food</h3>
+                  </div>
+                  <button 
+                    onClick={() => setIsAddFoodOpen(false)}
+                    className="p-1 rounded-lg text-zinc-450 hover:text-zinc-900 dark:hover:text-white transition-colors text-xs font-mono font-bold uppercase cursor-pointer"
+                  >
+                    [ Close ]
+                  </button>
+                </div>
+
+                <form onSubmit={handleAddFood} className="space-y-4">
+                  <div>
+                    <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1.5 font-mono">Food Description</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Grilled Salmon Filet"
+                      value={foodName}
+                      onChange={(e) => setFoodName(e.target.value)}
+                      className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-3.5 py-2.5 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-405 dark:placeholder:text-zinc-650"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1.5 font-mono">Energy (kcal)</label>
+                      <input
+                        type="number"
+                        placeholder="350"
+                        value={calories}
+                        onChange={(e) => setCalories(e.target.value)}
+                        className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-3.5 py-2.5 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-405 dark:placeholder:text-zinc-650"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1.5 font-mono">Meal Period</label>
+                      <select
+                        value={mealType}
+                        onChange={(e) => setMealType(e.target.value as any)}
+                        className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-3.5 py-2.5 text-xs text-zinc-750 dark:text-zinc-350 focus:outline-none font-semibold"
+                      >
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Snacks">Snack</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1.5 font-mono">Protein (g)</label>
+                      <input
+                        type="number"
+                        placeholder="35"
+                        value={protein}
+                        onChange={(e) => setProtein(e.target.value)}
+                        className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-2.5 py-2.5 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-655"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1.5 font-mono">Carbs (g)</label>
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={carbs}
+                        onChange={(e) => setCarbs(e.target.value)}
+                        className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-2.5 py-2.5 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-655"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono text-zinc-500 font-bold uppercase tracking-wider block mb-1.5 font-mono">Fats (g)</label>
+                      <input
+                        type="number"
+                        placeholder="20"
+                        value={fats}
+                        onChange={(e) => setFats(e.target.value)}
+                        className="w-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/5 rounded-xl px-2.5 py-2.5 text-xs text-zinc-850 dark:text-zinc-200 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-655"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-brand-lime text-black font-extrabold text-xs py-3.5 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer mt-6 uppercase tracking-wider font-mono shadow-md shadow-brand-lime/10"
+                  >
+                    <Plus className="w-4 h-4 text-black" /> Log Custom Food
+                  </button>
+                </form>
+              </div>
+              
+              <div className="font-mono text-[9px] text-zinc-400 dark:text-zinc-600 uppercase border-t border-black/5 dark:border-white/5 pt-4">
+                SYS_NUTRITION_LOGGING // ACTIVE
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </div>
   );

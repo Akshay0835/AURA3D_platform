@@ -18,6 +18,7 @@ import {
   Thermometer,
   Gauge
 } from 'lucide-react';
+import { useAppStore } from '@/store/useAppStore';
 
 // Types of exercises supported
 type ExerciseType = 'squat' | 'deadlift' | 'curl' | 'press';
@@ -548,6 +549,7 @@ function SkeletonScene({
 }
 
 export default function BiomechanicalMotionLab() {
+  const theme = useAppStore((state) => state.theme);
   const [mounted, setMounted] = useState(false);
   const [exercise, setExercise] = useState<ExerciseType>('squat');
   
@@ -695,7 +697,9 @@ export default function BiomechanicalMotionLab() {
 
   if (!mounted) {
     return (
-      <div className="w-full min-h-[500px] flex items-center justify-center bg-zinc-950 border border-white/5 rounded-3xl">
+      <div className={`w-full min-h-[500px] flex items-center justify-center border rounded-3xl ${
+        theme === 'dark' ? 'bg-zinc-950 border-white/5' : 'bg-white border-zinc-200 shadow-sm'
+      }`}>
         <div className="w-10 h-10 border-2 border-brand-lime border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -705,19 +709,29 @@ export default function BiomechanicalMotionLab() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
       
       {/* 3D WebGL Canvas Panel (Left Side - 8 Columns) */}
-      <div className="lg:col-span-8 bg-zinc-950 border border-white/5 rounded-3xl min-h-[450px] lg:min-h-[580px] relative overflow-hidden flex flex-col justify-between p-4 group">
+      <div className={`lg:col-span-8 border rounded-3xl min-h-[450px] lg:min-h-[580px] relative overflow-hidden flex flex-col justify-between p-4 group transition-colors duration-300 ${
+        theme === 'dark' ? 'bg-zinc-950 border-white/5' : 'bg-white border-zinc-200 shadow-sm'
+      }`}>
         
         {/* Tech grid layout decoration overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(204,255,0,0.006)_1px,transparent_1px),linear-gradient(90deg,rgba(204,255,0,0.006)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+        <div className={`absolute inset-0 bg-[size:24px_24px] pointer-events-none ${
+          theme === 'dark'
+            ? 'bg-[linear-gradient(rgba(204,255,0,0.006)_1px,transparent_1px),linear-gradient(90deg,rgba(204,255,0,0.006)_1px,transparent_1px)]'
+            : 'bg-[linear-gradient(rgba(204,255,0,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(204,255,0,0.015)_1px,transparent_1px)]'
+        }`} />
         
         {/* Floating Top Header Badges */}
         <div className="absolute top-4 inset-x-4 flex justify-between items-center pointer-events-none z-25">
-          <div className="bg-black/80 border border-white/10 px-3 py-1.5 rounded-xl font-mono text-[9px] text-zinc-400 flex items-center gap-2 backdrop-blur-md">
-            <span className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-brand-lime animate-pulse' : 'bg-zinc-650'}`} />
+          <div className={`border px-3 py-1.5 rounded-xl font-mono text-[9px] flex items-center gap-2 backdrop-blur-md ${
+            theme === 'dark' ? 'bg-black/80 border-white/10 text-zinc-400' : 'bg-zinc-100/90 border-zinc-300 text-zinc-700'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-brand-lime animate-pulse' : 'bg-zinc-600'}`} />
             <span>CALIBRATION STATUS: {isPlaying ? 'STREAMING' : 'PAUSED'}</span>
           </div>
           
-          <div className="bg-black/80 border border-white/10 px-3 py-1.5 rounded-xl font-mono text-[9px] text-zinc-400 flex items-center gap-2 backdrop-blur-md">
+          <div className={`border px-3 py-1.5 rounded-xl font-mono text-[9px] flex items-center gap-2 backdrop-blur-md ${
+            theme === 'dark' ? 'bg-black/80 border-white/10 text-zinc-400' : 'bg-zinc-100/90 border-zinc-300 text-zinc-700'
+          }`}>
             <Activity className="w-3.5 h-3.5 text-brand-lime" />
             <span>CORE CLOCK: {time.toFixed(2)}s</span>
           </div>
@@ -733,7 +747,9 @@ export default function BiomechanicalMotionLab() {
             loop
             muted
             playsInline
-            className="absolute w-[85%] h-[85%] object-contain opacity-35 grayscale contrast-[1.3] brightness-[0.8] mix-blend-screen pointer-events-none rounded-2xl z-0"
+            className={`absolute w-[85%] h-[85%] object-contain grayscale contrast-[1.3] brightness-[0.8] pointer-events-none rounded-2xl z-0 transition-opacity duration-300 ${
+              theme === 'dark' ? 'mix-blend-screen opacity-35' : 'mix-blend-multiply opacity-25'
+            }`}
           />
 
           <div className="absolute inset-0 z-10">
@@ -773,45 +789,51 @@ export default function BiomechanicalMotionLab() {
         </div>
 
         {/* Interactive Playback Controller Overlay */}
-        <div className="border-t border-white/5 pt-4 flex items-center justify-between z-20">
+        <div className={`border-t pt-4 flex items-center justify-between z-20 ${
+          theme === 'dark' ? 'border-white/5' : 'border-zinc-300'
+        }`}>
           <div className="flex gap-2">
             <button 
               onClick={() => setIsPlaying(!isPlaying)}
-              className="w-9 h-9 rounded-xl bg-zinc-900 border border-white/10 hover:border-brand-lime flex items-center justify-center text-white transition-colors cursor-pointer"
+              aria-label={isPlaying ? 'Pause simulation' : 'Play simulation'}
+              className={`w-9 h-9 rounded-xl border hover:border-brand-lime flex items-center justify-center transition-colors cursor-pointer ${
+                theme === 'dark' ? 'bg-zinc-900 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+              }`}
               title={isPlaying ? 'Pause simulation' : 'Play simulation'}
             >
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 text-brand-lime" />}
             </button>
-            <button 
+            <button
               onClick={() => setTime(0)}
-              className="w-9 h-9 rounded-xl bg-zinc-900 border border-white/10 hover:border-brand-lime flex items-center justify-center text-white transition-colors cursor-pointer"
+              aria-label="Reset simulation clock"
+              className={`w-9 h-9 rounded-xl border hover:border-brand-lime flex items-center justify-center transition-colors cursor-pointer ${
+                theme === 'dark' ? 'bg-zinc-900 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+              }`}
               title="Reset simulation clock"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setUseHeatmap(!useHeatmap)}
+              aria-label={useHeatmap ? "Disable Heatmap Mode" : "Enable Heatmap Mode"}
+              className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-colors cursor-pointer ${
+                useHeatmap 
+                  ? 'bg-brand-lime border-brand-lime text-black font-extrabold' 
+                  : (theme === 'dark' ? 'bg-zinc-900 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-800')
+              }`}
+              title={useHeatmap ? "Disable Heatmap Mode" : "Enable Heatmap Mode"}
+            >
+              <Eye className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="flex gap-2.5">
-            {/* Heatmap Toggle */}
-            <button 
-              onClick={() => setUseHeatmap(!useHeatmap)}
-              className={`px-3 py-1.5 rounded-xl border font-mono text-[9px] flex items-center gap-1.5 transition-all cursor-pointer ${
-                useHeatmap 
-                  ? 'bg-brand-lime/10 border-brand-lime text-brand-lime font-bold' 
-                  : 'bg-zinc-900 border-white/10 text-zinc-500'
-              }`}
-            >
-              <Thermometer className="w-3.5 h-3.5" />
-              <span>HEATMAP</span>
-            </button>
-
-            {/* Vectors Toggle */}
-            <button 
+          <div className="flex gap-2">
+            <button
               onClick={() => setShowVectors(!showVectors)}
               className={`px-3 py-1.5 rounded-xl border font-mono text-[9px] flex items-center gap-1.5 transition-all cursor-pointer ${
                 showVectors 
                   ? 'bg-brand-cyan/10 border-brand-cyan text-brand-cyan font-bold' 
-                  : 'bg-zinc-900 border-white/10 text-zinc-500'
+                  : (theme === 'dark' ? 'bg-zinc-900 border-white/10 text-zinc-500' : 'bg-zinc-100 border-zinc-300 text-zinc-500')
               }`}
             >
               <Zap className="w-3.5 h-3.5" />
@@ -823,14 +845,18 @@ export default function BiomechanicalMotionLab() {
       </div>
 
       {/* Diagnostics Controls Console Sidebar (Right Side - 4 Columns) */}
-      <div className="lg:col-span-4 bg-zinc-950 border border-white/5 rounded-3xl p-6 flex flex-col justify-between backdrop-blur-md select-none text-left">
+      <div className={`lg:col-span-4 border rounded-3xl p-6 flex flex-col justify-between backdrop-blur-md select-none text-left transition-colors duration-300 ${
+        theme === 'dark' ? 'bg-zinc-950 border-white/5' : 'bg-white border-zinc-200 shadow-sm'
+      }`}>
         
         <div className="space-y-6">
           
           {/* Header titles */}
           <div className="space-y-1">
             <span className="text-[10px] text-brand-lime font-mono tracking-widest font-bold uppercase block">METRICS ENGINE v1.2</span>
-            <h3 className="text-xl font-black uppercase text-white tracking-wide">Biokinetic Analyst</h3>
+            <h3 className={`text-xl font-black uppercase tracking-wide ${
+              theme === 'dark' ? 'text-white' : 'text-zinc-900'
+            }`}>Biokinetic Analyst</h3>
           </div>
 
           {/* Exercise select buttons list */}
@@ -852,7 +878,9 @@ export default function BiomechanicalMotionLab() {
                   className={`py-2.5 px-3 rounded-xl border font-mono text-[10px] text-center transition-all cursor-pointer ${
                     exercise === ex.id
                       ? 'bg-brand-lime border-brand-lime text-black font-extrabold shadow-lg shadow-brand-lime/15'
-                      : 'bg-zinc-900/60 border-white/5 text-zinc-400 hover:border-white/15'
+                      : (theme === 'dark'
+                        ? 'bg-zinc-900/60 border-white/5 text-zinc-400 hover:border-white/15'
+                        : 'bg-zinc-100/60 border-zinc-200 text-zinc-600 hover:border-zinc-300')
                   }`}
                 >
                   {ex.name}
@@ -878,11 +906,15 @@ export default function BiomechanicalMotionLab() {
                 if (!muscle.active) return null;
                 return (
                   <div key={index} className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-medium text-zinc-400">
+                    <div className={`flex justify-between text-[10px] font-medium ${
+                      theme === 'dark' ? 'text-zinc-400' : 'text-zinc-700'
+                    }`}>
                       <span>{muscle.name}</span>
                       <span className="font-mono">{muscle.val}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-white/5">
+                    <div className={`w-full h-1.5 rounded-full overflow-hidden border ${
+                      theme === 'dark' ? 'bg-zinc-900 border-white/5' : 'bg-zinc-200 border-zinc-300'
+                    }`}>
                       <div 
                         className={`h-full ${muscle.accent}`} 
                         style={{ width: `${muscle.val}%` }} 
@@ -895,27 +927,37 @@ export default function BiomechanicalMotionLab() {
           </div>
 
           {/* Joint Metrics breakdown details */}
-          <div className="bg-zinc-900/40 border border-white/5 rounded-2xl p-4.5 space-y-3">
+          <div className={`border rounded-2xl p-4.5 space-y-3 ${
+            theme === 'dark' ? 'bg-zinc-900/40 border-white/5' : 'bg-zinc-100/50 border-zinc-200'
+          }`}>
             <span className="text-[9px] text-zinc-500 font-mono font-bold uppercase tracking-wider block">JOINT TELEMETRY READOUTS</span>
             
             <div className="grid grid-cols-2 gap-3.5 font-mono text-[10px]">
               <div>
                 <span className="text-zinc-500 block uppercase text-[8px]">Spine tilt</span>
-                <span className={`font-black ${metrics.spineAngle > 40 ? 'text-red-500' : 'text-white'}`}>
+                <span className={`font-black ${
+                  metrics.spineAngle > 40 
+                    ? 'text-red-500' 
+                    : (theme === 'dark' ? 'text-white' : 'text-zinc-800')
+                }`}>
                   {metrics.spineAngle}°
                 </span>
               </div>
               
               <div>
                 <span className="text-zinc-500 block uppercase text-[8px]">Knee Angle</span>
-                <span className={`font-black ${metrics.kneeAngle < 110 && exercise === 'squat' ? 'text-orange-400' : 'text-white'}`}>
+                <span className={`font-black ${
+                  metrics.kneeAngle < 110 && exercise === 'squat' 
+                    ? 'text-orange-400' 
+                    : (theme === 'dark' ? 'text-white' : 'text-zinc-800')
+                }`}>
                   {metrics.kneeAngle}°
                 </span>
               </div>
 
               <div>
                 <span className="text-zinc-500 block uppercase text-[8px]">Elbow flexion</span>
-                <span className="font-black text-white">
+                <span className={`font-black ${theme === 'dark' ? 'text-white' : 'text-zinc-800'}`}>
                   {metrics.elbowAngle}°
                 </span>
               </div>
@@ -932,16 +974,20 @@ export default function BiomechanicalMotionLab() {
         </div>
 
         {/* Real-time Diagnostics Terminal Log */}
-        <div className="mt-6 pt-4 border-t border-white/5 space-y-2 w-full">
+        <div className={`mt-6 pt-4 border-t space-y-2 w-full ${
+          theme === 'dark' ? 'border-white/5' : 'border-zinc-200'
+        }`}>
           <span className="text-[9px] text-zinc-550 font-mono font-bold uppercase tracking-wider block flex items-center gap-1.5">
             <Gauge className="w-3.5 h-3.5 text-brand-lime" />
             DIAGNOSTICS LIVE CONSOLE
           </span>
           
-          <div className="bg-black border border-white/5 rounded-xl p-3 h-28 overflow-y-auto font-mono text-[9px] text-zinc-400 space-y-1.5 scrollbar-thin">
+          <div className={`border rounded-xl p-3 h-28 overflow-y-auto font-mono text-[9px] space-y-1.5 scrollbar-thin ${
+            theme === 'dark' ? 'bg-black border-white/5 text-zinc-400' : 'bg-zinc-100 border-zinc-200 text-zinc-600'
+          }`}>
             <AnimatePresence>
               {logs.map((log, idx) => {
-                let colorClass = 'text-zinc-400';
+                let colorClass = theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600';
                 if (log.includes('[SYSTEM]')) colorClass = 'text-brand-cyan font-bold';
                 else if (log.includes('[OK]')) colorClass = 'text-brand-lime';
                 else if (log.includes('[WARN]')) colorClass = 'text-red-400 font-bold';

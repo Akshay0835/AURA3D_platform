@@ -319,7 +319,7 @@ function Scene({ theme }: { theme: 'dark' | 'light' }) {
   );
 }
 
-export default function HeroCanvas() {
+export default function HeroCanvas({ className = "w-full h-[350px] md:h-[500px] xl:h-[600px]" }: { className?: string }) {
   const [mounted, setMounted] = useState(false);
   const theme = useAppStore((state) => state.theme);
 
@@ -329,14 +329,14 @@ export default function HeroCanvas() {
 
   if (!mounted) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center min-h-[350px]">
         <div className="w-12 h-12 border-2 border-brand-lime border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-[350px] md:h-[500px] xl:h-[600px] relative">
+    <div className={`${className} relative`}>
       <Canvas camera={{ position: [0, 0, 7.0], fov: 45 }}>
         <ambientLight intensity={theme === 'dark' ? 0.5 : 0.85} />
         <pointLight position={[10, 10, 10]} intensity={1.5} color="#ffffff" />

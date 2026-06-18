@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAppStore } from '@/store/useAppStore';
@@ -93,16 +94,24 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 onClick={() => onClose?.()}
                 className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all group relative overflow-hidden ${
                   isActive 
-                    ? 'text-black bg-brand-lime font-semibold' 
-                    : 'text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/5'
+                    ? 'text-black font-semibold' 
+                    : 'text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-100'
                 }`}
               >
-                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-black' : 'text-zinc-500 dark:text-zinc-400 group-hover:text-black dark:group-hover:text-zinc-100'}`} />
-                {!collapsed && <span>{item.name}</span>}
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebar-active-pill"
+                    className="absolute inset-0 bg-brand-lime -z-10 rounded-xl"
+                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                  />
+                )}
+                
+                <item.icon className={`w-5 h-5 shrink-0 relative z-10 transition-colors ${isActive ? 'text-black' : 'text-zinc-500 dark:text-zinc-400 group-hover:text-black dark:group-hover:text-zinc-100'}`} />
+                {!collapsed && <span className="relative z-10">{item.name}</span>}
                 
                 {/* Visual hover bubble effect */}
                 {!isActive && (
-                  <div className="absolute inset-0 bg-white/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  <div className="absolute inset-0 bg-black/5 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-xl" />
                 )}
               </Link>
             );
@@ -114,10 +123,12 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       <div className="p-4 border-t border-black/5 dark:border-white/5 space-y-4">
         {/* User Card */}
         <div className={`flex items-center gap-3 overflow-hidden ${collapsed ? 'justify-center' : ''}`}>
-          <img 
+          <Image 
             src={user.avatar} 
             alt={user.name} 
-            className="w-9 h-9 rounded-full border border-black/10 dark:border-white/10 object-cover shrink-0"
+            width={36}
+            height={36}
+            className="rounded-full border border-black/10 dark:border-white/10 object-cover shrink-0"
           />
           {!collapsed && (
             <div className="overflow-hidden">

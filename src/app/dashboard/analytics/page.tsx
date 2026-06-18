@@ -6,7 +6,48 @@ import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, RadialBarChart, Ra
 import { LineChart, Calendar, Sparkles, TrendingDown, Target, Award } from 'lucide-react';
 
 // Macro Colors
-const MACRO_COLORS = ['#a3e635', '#06b6d4', '#ec4899']; // Lime (Protein), Cyan (Carbs), Pink (Fats)
+const MACRO_COLORS = ['url(#pieProteinGrad)', 'url(#pieCarbsGrad)', 'url(#pieFatsGrad)'];
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}
+
+const HUDTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white/80 dark:bg-zinc-950/85 backdrop-blur-md border border-black/10 dark:border-white/10 p-3 rounded-xl shadow-xl font-mono text-[9px] text-left">
+        <p className="font-extrabold text-zinc-900 dark:text-white mb-2 uppercase tracking-widest text-[8px] border-b border-black/5 dark:border-white/5 pb-1">
+          // LOG_INDEX: {label}
+        </p>
+        <div className="space-y-1.5">
+          {payload.map((entry: any, index: number) => {
+            const color = entry.color || entry.fill;
+            // Map the linearGradient URL back to its base color for display if necessary
+            let displayColor = color;
+            if (typeof color === 'string' && color.includes('pieProteinGrad')) displayColor = 'var(--brand-lime)';
+            if (typeof color === 'string' && color.includes('pieCarbsGrad')) displayColor = 'var(--brand-cyan)';
+            if (typeof color === 'string' && color.includes('pieFatsGrad')) displayColor = '#ec4899';
+            
+            return (
+              <div key={index} className="flex items-center gap-3.5 justify-between">
+                <span className="flex items-center gap-1.5 text-zinc-550 dark:text-zinc-400 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: displayColor }} />
+                  <span className="uppercase">{entry.name}:</span>
+                </span>
+                <span className="font-extrabold" style={{ color: displayColor }}>
+                  {entry.value}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function AnalyticsPage() {
   const { user, weightHistory, calorieHistory, workoutHistory, theme } = useAppStore();
@@ -135,30 +176,31 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="h-[280px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <AreaChart data={getWeightData()} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                 <defs>
                   <linearGradient id="weightGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.2}/>
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="var(--brand-cyan)" stopOpacity={0.35}/>
+                    <stop offset="95%" stopColor="var(--brand-cyan)" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="weightLineGlow" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="var(--brand-cyan)" />
+                    <stop offset="100%" stopColor="var(--brand-lime)" />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#1f1f23' : '#f4f4f5'} vertical={false} />
-                <XAxis dataKey="date" stroke="#71717a" fontSize={10} tickLine={false} />
-                <YAxis stroke="#71717a" fontSize={10} domain={['dataMin - 1', 'dataMax + 1']} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff', borderColor: theme === 'dark' ? '#27272a' : '#e4e4e7', borderRadius: '12px' }}
-                  labelStyle={{ color: theme === 'dark' ? '#a1a1aa' : '#71717a', fontSize: '11px', fontWeight: 'bold' }}
-                  itemStyle={{ color: '#06b6d4', fontSize: '11px' }}
-                />
+                <CartesianGrid strokeDasharray="4 4" stroke={theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)'} vertical={false} />
+                <XAxis dataKey="date" stroke="#71717a" fontSize={9} tickLine={false} className="font-mono" />
+                <YAxis stroke="#71717a" fontSize={9} domain={['dataMin - 1', 'dataMax + 1']} tickLine={false} className="font-mono" />
+                <Tooltip content={<HUDTooltip />} />
                 <Area 
                   type="monotone" 
                   dataKey="weight" 
-                  stroke="#06b6d4" 
-                  strokeWidth={2.5} 
+                  stroke="url(#weightLineGlow)" 
+                  strokeWidth={3} 
                   fillOpacity={1} 
                   fill="url(#weightGlow)"
-                  dot={{ fill: '#06b6d4', stroke: theme === 'dark' ? '#18181b' : '#ffffff', strokeWidth: 1.5 }}
+                  dot={{ fill: 'var(--brand-cyan)', stroke: theme === 'dark' ? '#18181b' : '#ffffff', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, strokeWidth: 0, fill: 'var(--brand-lime)' }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -173,7 +215,7 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="relative h-[160px] flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <RadialBarChart 
                 cx="50%" 
                 cy="50%" 
@@ -191,24 +233,24 @@ export default function AnalyticsPage() {
                 />
               </RadialBarChart>
             </ResponsiveContainer>
-            <div className="absolute text-center">
-              <span className="text-3xl font-extrabold text-zinc-900 dark:text-white">{progressPercent}%</span>
-              <p className="text-[10px] font-bold text-brand-lime font-mono uppercase tracking-wider">Completed</p>
+            <div className="absolute text-center flex flex-col items-center justify-center">
+              <span className="text-3xl font-extrabold text-zinc-900 dark:text-white leading-none">{progressPercent}%</span>
+              <p className="text-[9px] font-black text-brand-lime font-mono uppercase tracking-wider mt-1.5">// Completed</p>
             </div>
           </div>
 
           <div className="space-y-3 pt-3 border-t border-black/5 dark:border-white/5">
-            <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-              <span className="flex items-center gap-1.5"><TrendingDown className="w-4 h-4 text-brand-lime" /> Lost</span>
-              <span>{achievedLoss.toFixed(1)} kg</span>
+            <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300 font-mono">
+              <span className="flex items-center gap-1.5"><TrendingDown className="w-4 h-4 text-brand-lime" /> LOST</span>
+              <span className="font-extrabold">{achievedLoss.toFixed(1)} kg</span>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-              <span className="flex items-center gap-1.5"><Target className="w-4 h-4 text-brand-cyan" /> Remaining</span>
-              <span>{(currentWeight - targetWeight).toFixed(1)} kg</span>
+            <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300 font-mono">
+              <span className="flex items-center gap-1.5"><Target className="w-4 h-4 text-brand-cyan" /> REMAINING</span>
+              <span className="font-extrabold">{(currentWeight - targetWeight).toFixed(1)} kg</span>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-pink-500" /> Target Date</span>
-              <span>July 28, 2026</span>
+            <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300 font-mono">
+              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-pink-500" /> TARGET DATE</span>
+              <span className="font-extrabold text-zinc-650 dark:text-zinc-400">July 28, 2026</span>
             </div>
           </div>
         </div>
@@ -220,24 +262,33 @@ export default function AnalyticsPage() {
         
         {/* 3. Workout Performance Bar Chart (6 columns) */}
         <div className="lg:col-span-6 glass-card p-6 rounded-3xl space-y-4">
-          <div className="pb-2 border-b border-black/5 dark:border-white/5">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Workout Volume Performance</h3>
-            <p className="text-[10px] text-zinc-500 font-mono">Completion rates vs missed sets</p>
+          <div className="pb-2 border-b border-black/5 dark:border-white/5 flex justify-between items-center">
+            <div>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Workout Volume Performance</h3>
+              <p className="text-[10px] text-zinc-500 font-mono">Completion rates vs missed sets</p>
+            </div>
+            <span className="text-[8px] font-mono text-zinc-400">SYS_WORKOUT_04</span>
           </div>
 
           <div className="h-[220px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <BarChart data={workoutPerformanceData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#1f1f23' : '#f4f4f5'} vertical={false} />
-                <XAxis dataKey="name" stroke="#71717a" fontSize={10} tickLine={false} />
-                <YAxis stroke="#71717a" fontSize={10} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff', borderColor: theme === 'dark' ? '#27272a' : '#e4e4e7', borderRadius: '12px' }}
-                  labelStyle={{ color: theme === 'dark' ? '#a1a1aa' : '#71717a', fontSize: '11px', fontWeight: 'bold' }}
-                  itemStyle={{ fontSize: '11px' }}
-                />
-                <Bar dataKey="completion" name="Completed sets (%)" fill="#a3e635" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="missed" name="Missed sets (%)" fill={theme === 'dark' ? '#27272a' : '#e4e4e7'} radius={[4, 4, 0, 0]} />
+                <defs>
+                  <linearGradient id="barCompletionGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--brand-lime)" stopOpacity={1} />
+                    <stop offset="100%" stopColor="var(--brand-lime)" stopOpacity={0.6} />
+                  </linearGradient>
+                  <linearGradient id="barMissedGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'} />
+                    <stop offset="100%" stopColor={theme === 'dark' ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.02)'} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="4 4" stroke={theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)'} vertical={false} />
+                <XAxis dataKey="name" stroke="#71717a" fontSize={9} tickLine={false} className="font-mono" />
+                <YAxis stroke="#71717a" fontSize={9} tickLine={false} className="font-mono" />
+                <Tooltip content={<HUDTooltip />} />
+                <Bar dataKey="completion" name="Completed sets (%)" fill="url(#barCompletionGrad)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="missed" name="Missed sets (%)" fill="url(#barMissedGrad)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -245,55 +296,78 @@ export default function AnalyticsPage() {
 
         {/* 4. Macro Splits Donut & Stacked Calorie Chart (6 columns) */}
         <div className="lg:col-span-6 glass-card p-6 rounded-3xl space-y-4">
-          <div className="pb-2 border-b border-black/5 dark:border-white/5">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Weekly Calorie Composition</h3>
-            <p className="text-[10px] text-zinc-500 font-mono">Macronutrient split & stacking (kcal)</p>
+          <div className="pb-2 border-b border-black/5 dark:border-white/5 flex justify-between items-center">
+            <div>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Weekly Calorie Composition</h3>
+              <p className="text-[10px] text-zinc-500 font-mono">Macronutrient split & stacking (kcal)</p>
+            </div>
+            <span className="text-[8px] font-mono text-zinc-400">SYS_MACROS_02</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
             {/* Donut chart for active macro ratios */}
             <div className="sm:col-span-5 h-[160px] flex items-center justify-center relative">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <PieChart>
+                  <defs>
+                    <linearGradient id="pieProteinGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="var(--brand-lime)" />
+                      <stop offset="100%" stopColor="#84cc16" />
+                    </linearGradient>
+                    <linearGradient id="pieCarbsGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="var(--brand-cyan)" />
+                      <stop offset="100%" stopColor="#0891b2" />
+                    </linearGradient>
+                    <linearGradient id="pieFatsGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#ec4899" />
+                      <stop offset="100%" stopColor="#db2777" />
+                    </linearGradient>
+                  </defs>
                   <Pie
                     data={macroPieData}
-                    innerRadius="60%"
+                    innerRadius="62%"
                     outerRadius="80%"
-                    paddingAngle={3}
+                    paddingAngle={4}
                     dataKey="value"
                   >
                     {macroPieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={MACRO_COLORS[index]} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff', borderColor: theme === 'dark' ? '#27272a' : '#e4e4e7', borderRadius: '12px' }}
-                    labelStyle={{ color: theme === 'dark' ? '#a1a1aa' : '#71717a', fontSize: '11px', fontWeight: 'bold' }}
-                    itemStyle={{ fontSize: '11px' }}
-                  />
+                  <Tooltip content={<HUDTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute text-center">
-                <span className="text-xs text-zinc-500 font-bold font-mono">Today's</span>
-                <p className="text-sm font-bold text-zinc-900 dark:text-white font-mono">Macros</p>
+              <div className="absolute text-center flex flex-col items-center justify-center">
+                <span className="text-[8px] text-zinc-500 font-bold font-mono uppercase tracking-wider leading-none">Today's</span>
+                <p className="text-xs font-black text-zinc-900 dark:text-white font-mono mt-1 leading-none">Macros</p>
               </div>
             </div>
 
             {/* Stacked Bar chart for daily logs */}
             <div className="sm:col-span-7 h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <BarChart data={stackedCalorieData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#1f1f23' : '#f4f4f5'} vertical={false} />
-                  <XAxis dataKey="date" stroke="#71717a" fontSize={10} tickLine={false} />
-                  <YAxis stroke="#71717a" fontSize={10} tickLine={false} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff', borderColor: theme === 'dark' ? '#27272a' : '#e4e4e7', borderRadius: '12px' }}
-                    labelStyle={{ color: theme === 'dark' ? '#a1a1aa' : '#71717a', fontSize: '11px', fontWeight: 'bold' }}
-                    itemStyle={{ fontSize: '11px' }}
-                  />
-                  <Bar dataKey="Protein" stackId="a" fill="#a3e635" />
-                  <Bar dataKey="Carbs" stackId="a" fill="#06b6d4" />
-                  <Bar dataKey="Fats" stackId="a" fill="#ec4899" />
+                  <defs>
+                    <linearGradient id="stackProteinGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--brand-lime)" />
+                      <stop offset="100%" stopColor="#84cc16" opacity={0.85} />
+                    </linearGradient>
+                    <linearGradient id="stackCarbsGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--brand-cyan)" />
+                      <stop offset="100%" stopColor="#0891b2" opacity={0.85} />
+                    </linearGradient>
+                    <linearGradient id="stackFatsGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ec4899" />
+                      <stop offset="100%" stopColor="#db2777" opacity={0.85} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="4 4" stroke={theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)'} vertical={false} />
+                  <XAxis dataKey="date" stroke="#71717a" fontSize={9} tickLine={false} className="font-mono" />
+                  <YAxis stroke="#71717a" fontSize={9} tickLine={false} className="font-mono" />
+                  <Tooltip content={<HUDTooltip />} />
+                  <Bar dataKey="Protein" stackId="a" fill="url(#stackProteinGrad)" />
+                  <Bar dataKey="Carbs" stackId="a" fill="url(#stackCarbsGrad)" />
+                  <Bar dataKey="Fats" stackId="a" fill="url(#stackFatsGrad)" />
                 </BarChart>
               </ResponsiveContainer>
             </div>

@@ -1,10 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { motion } from 'framer-motion';
 import { Scale, ArrowRight, Activity, Calendar, FileText, CheckCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}
+
+const HUDTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white/80 dark:bg-zinc-950/85 backdrop-blur-md border border-black/10 dark:border-white/10 p-3 rounded-xl shadow-xl font-mono text-[9px] text-left">
+        <p className="font-extrabold text-zinc-900 dark:text-white mb-2 uppercase tracking-widest text-[8px] border-b border-black/5 dark:border-white/5 pb-1">
+          // DATE: {label}
+        </p>
+        <div className="space-y-1.5">
+          {payload.map((entry: any, index: number) => {
+            const color = entry.color || entry.fill;
+            return (
+              <div key={index} className="flex items-center gap-3.5 justify-between">
+                <span className="flex items-center gap-1.5 text-zinc-550 dark:text-zinc-400 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
+                  <span className="uppercase">{entry.name}:</span>
+                </span>
+                <span className="font-extrabold" style={{ color: color }}>
+                  {entry.value}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function BmiPage() {
   const { theme, user, bmiHistory, addBmiEntry } = useAppStore();
@@ -12,6 +47,19 @@ export default function BmiPage() {
   const [weight, setWeight] = useState(user.weight.toString());
   const [height, setHeight] = useState(user.height.toString());
   const [calculatedEntry, setCalculatedEntry] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="w-full h-96 flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-brand-lime border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   const currentEntry = bmiHistory[bmiHistory.length - 1] || {
     bmi: 24.2,
@@ -193,52 +241,78 @@ export default function BmiPage() {
           
           {/* History Chart */}
           <div className="glass-card p-6 rounded-3xl space-y-4">
-            <h3 className="text-base font-bold text-zinc-900 dark:text-white tracking-wide border-b border-black/5 dark:border-white/5 pb-2">Composition History</h3>
+            <div className="flex justify-between items-center pb-2 border-b border-black/5 dark:border-white/5">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Composition History</h3>
+              <span className="text-[8px] font-mono text-zinc-400">SYS_BMI_TREND</span>
+            </div>
             
             <div className="h-[180px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <LineChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#27272a' : '#e4e4e7'} vertical={false} />
-                  <XAxis dataKey="date" stroke="#71717a" fontSize={10} tickLine={false} />
-                  <YAxis stroke="#71717a" fontSize={10} domain={['dataMin - 1', 'dataMax + 1']} tickLine={false} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff', borderColor: theme === 'dark' ? '#27272a' : '#e4e4e7', borderRadius: '12px' }}
-                    labelStyle={{ color: theme === 'dark' ? '#a1a1aa' : '#52525b', fontSize: '11px', fontWeight: 'bold' }}
-                    itemStyle={{ color: theme === 'dark' ? '#a3e635' : '#2563eb', fontSize: '11px' }}
-                  />
+                  <defs>
+                    <linearGradient id="bmiLineGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="var(--brand-cyan)" />
+                      <stop offset="100%" stopColor="var(--brand-lime)" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="4 4" stroke={theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)'} vertical={false} />
+                  <XAxis dataKey="date" stroke="#71717a" fontSize={9} tickLine={false} className="font-mono" />
+                  <YAxis stroke="#71717a" fontSize={9} domain={['dataMin - 1', 'dataMax + 1']} tickLine={false} className="font-mono" />
+                  <Tooltip content={<HUDTooltip />} />
                   <Line 
                     type="monotone" 
                     dataKey="bmi" 
-                    stroke={theme === 'dark' ? '#a3e635' : '#2563eb'} 
-                    strokeWidth={2.5} 
-                    dot={{ fill: theme === 'dark' ? '#a3e635' : '#2563eb', stroke: theme === 'dark' ? '#18181b' : '#ffffff', strokeWidth: 1.5 }}
-                    activeDot={{ r: 6 }}
+                    stroke="url(#bmiLineGrad)" 
+                    strokeWidth={3} 
+                    dot={{ fill: 'var(--brand-cyan)', stroke: theme === 'dark' ? '#18181b' : '#ffffff', strokeWidth: 1.5, r: 3.5 }}
+                    activeDot={{ r: 5, strokeWidth: 0, fill: 'var(--brand-lime)' }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Past logs list */}
-          <div className="glass-card p-6 rounded-3xl space-y-3.5">
+          {/* Past logs timeline */}
+          <div className="glass-card p-6 rounded-3xl space-y-4">
             <div className="flex items-center gap-2 border-b border-black/5 dark:border-white/5 pb-2">
               <Calendar className="w-4.5 h-4.5 text-brand-cyan" />
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide">Historical Logs</h3>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white tracking-wide uppercase font-mono">Biometric Feed Timeline</h3>
             </div>
 
-            <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-              {bmiHistory.slice().reverse().map((entry) => (
-                <div key={entry.id} className="flex justify-between items-center p-3 rounded-xl bg-zinc-100/30 dark:bg-zinc-900/30 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 transition-colors">
-                  <div>
-                    <span className="text-[10px] text-zinc-500 font-mono font-bold block">{entry.date}</span>
-                    <span className="text-xs text-zinc-700 dark:text-zinc-300 font-semibold">{entry.weight}kg | {entry.height}cm</span>
+            <div className="relative pl-6 space-y-5 max-h-[300px] overflow-y-auto pr-1 text-left">
+              {/* Vertical timeline backbone */}
+              <div className="absolute left-2.5 top-2.5 bottom-2.5 w-[1.5px] bg-zinc-200 dark:bg-zinc-800 pointer-events-none" />
+
+              {bmiHistory.slice().reverse().map((entry) => {
+                let badgeColor = 'bg-brand-lime/10 text-lime-700 dark:text-brand-lime border-brand-lime/20';
+                if (entry.classification === 'Underweight') badgeColor = 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+                if (entry.classification === 'Overweight') badgeColor = 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20';
+                if (entry.classification === 'Obese') badgeColor = 'bg-red-500/10 text-red-650 dark:text-red-400 border-red-500/20';
+                
+                return (
+                  <div key={entry.id} className="relative group/timeline">
+                    {/* Timeline node */}
+                    <div className="absolute -left-[20.5px] top-1 w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700 group-hover/timeline:bg-brand-cyan group-hover/timeline:scale-125 border border-white dark:border-zinc-955 transition-all shadow-xs z-10" />
+
+                    <div className="p-3 rounded-2xl bg-zinc-100/40 dark:bg-zinc-900/30 border border-black/5 dark:border-white/5 hover:border-brand-cyan/25 dark:hover:border-brand-cyan/20 hover:shadow-xs transition-all duration-300">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[8.5px] text-zinc-550 font-mono font-bold block">{entry.date}</span>
+                          <span className="text-xs font-black text-zinc-850 dark:text-zinc-200 mt-0.5 block">
+                            {entry.weight} kg <span className="text-[10px] text-zinc-455 font-normal">/ {entry.height} cm</span>
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-xs font-mono font-black text-brand-cyan block">BMI: {entry.bmi}</span>
+                          <span className={`inline-block text-[8px] font-mono font-bold px-2 py-0.5 rounded border mt-1 uppercase ${badgeColor}`}>
+                            {entry.classification}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-xs font-mono font-bold text-brand-cyan block">BMI: {entry.bmi}</span>
-                    <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 uppercase font-mono">{entry.classification}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

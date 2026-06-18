@@ -208,50 +208,53 @@ export default function CoachChatPage() {
           {activeChat.messages.map((msg) => (
             <div 
               key={msg.id}
-              className={`flex items-start gap-3.5 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+              className={`flex items-start gap-4 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
             >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border shrink-0 ${
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 transition-transform hover:scale-105 shadow-inner ${
                 msg.sender === 'user' 
-                  ? 'bg-zinc-100 dark:bg-zinc-900 border-black/5 dark:border-white/5' 
-                  : 'bg-brand-lime/10 border-brand-lime/20'
+                  ? 'bg-zinc-200 dark:bg-zinc-900 border-black/10 dark:border-white/10' 
+                  : 'bg-brand-lime/10 border-brand-lime/30'
               }`}>
-                {msg.sender === 'user' ? <User className="w-4 h-4 text-zinc-500 dark:text-zinc-400" /> : <Bot className="w-4 h-4 text-brand-lime" />}
+                {msg.sender === 'user' ? <User className="w-4 h-4 text-zinc-550 dark:text-zinc-400" /> : <Bot className="w-4 h-4 text-brand-lime" />}
               </div>
               
-              <div className="space-y-3.5 w-full">
-                <div className={`text-xs py-3 px-4.5 rounded-2xl leading-relaxed font-medium ${
+              <div className="space-y-3 w-full">
+                <div className={`text-xs py-3.5 px-5 rounded-2xl leading-relaxed font-medium transition-all duration-300 relative shadow-sm hover:shadow ${
                   msg.sender === 'user'
-                    ? 'bg-brand-lime/10 border border-brand-lime/30 dark:border-brand-lime/20 text-zinc-800 dark:text-zinc-100 rounded-tr-none'
-                    : 'bg-zinc-100/60 dark:bg-zinc-900/60 border border-black/5 dark:border-white/5 text-zinc-700 dark:text-zinc-300 rounded-tl-none'
+                    ? 'bg-brand-lime/10 dark:bg-brand-lime/5 border border-brand-lime/30 dark:border-brand-lime/20 text-zinc-800 dark:text-zinc-100 rounded-tr-none'
+                    : 'bg-white/50 dark:bg-zinc-900/40 backdrop-blur-md border border-black/10 dark:border-white/5 text-zinc-700 dark:text-zinc-300 rounded-tl-none'
                 }`}>
+                  {msg.sender === 'coach' && (
+                    <span className="absolute top-1 right-2.5 font-mono text-[7px] text-zinc-400 opacity-60">SYS_COACH_LOG_OK</span>
+                  )}
                   {msg.text}
                 </div>
 
                 {/* Sub cards details */}
                 {msg.planDetails && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="glass-card p-3.5 rounded-xl border border-brand-lime/25 dark:border-brand-lime/15">
-                      <div className="flex items-center gap-1.5 mb-2 text-brand-lime font-mono text-[9px] font-bold uppercase">
+                    <div className="glass-card bg-brand-lime/5 p-3.5 rounded-xl border border-brand-lime/20 dark:border-brand-lime/10 shadow-xs hover:border-brand-lime/35 transition-all">
+                      <div className="flex items-center gap-1.5 mb-2 text-brand-lime font-mono text-[9px] font-extrabold uppercase">
                         <Dumbbell className="w-3.5 h-3.5" /> Workouts
                       </div>
-                      <ul className="text-[10px] text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5">
-                        {msg.planDetails.workout?.map((w, idx) => <li key={idx}>{w}</li>)}
+                      <ul className="text-[10px] text-zinc-650 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5 font-mono">
+                        {msg.planDetails.workout?.map((w, idx) => <li key={idx} className="leading-tight">{w}</li>)}
                       </ul>
                     </div>
-                    <div className="glass-card p-3.5 rounded-xl border border-brand-cyan/25 dark:border-brand-cyan/15">
-                      <div className="flex items-center gap-1.5 mb-2 text-brand-cyan font-mono text-[9px] font-bold uppercase">
+                    <div className="glass-card bg-brand-cyan/5 p-3.5 rounded-xl border border-brand-cyan/20 dark:border-brand-cyan/10 shadow-xs hover:border-brand-cyan/35 transition-all">
+                      <div className="flex items-center gap-1.5 mb-2 text-brand-cyan font-mono text-[9px] font-extrabold uppercase">
                         <Utensils className="w-3.5 h-3.5" /> Nutrition
                       </div>
-                      <ul className="text-[10px] text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5">
-                        {msg.planDetails.meals?.map((m, idx) => <li key={idx}>{m}</li>)}
+                      <ul className="text-[10px] text-zinc-650 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5 font-mono">
+                        {msg.planDetails.meals?.map((m, idx) => <li key={idx} className="leading-tight">{m}</li>)}
                       </ul>
                     </div>
-                    <div className="glass-card p-3.5 rounded-xl border border-pink-500/25 dark:border-pink-500/15">
-                      <div className="flex items-center gap-1.5 mb-2 text-pink-500 dark:text-pink-400 font-mono text-[9px] font-bold uppercase">
+                    <div className="glass-card bg-pink-500/5 p-3.5 rounded-xl border border-pink-550/20 dark:border-pink-500/10 shadow-xs hover:border-pink-500/35 transition-all">
+                      <div className="flex items-center gap-1.5 mb-2 text-pink-600 dark:text-pink-400 font-mono text-[9px] font-extrabold uppercase">
                         <Flag className="w-3.5 h-3.5" /> Milestones
                       </div>
-                      <ul className="text-[10px] text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5">
-                        {msg.planDetails.milestones?.map((mil, idx) => <li key={idx}>{mil}</li>)}
+                      <ul className="text-[10px] text-zinc-650 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5 font-mono">
+                        {msg.planDetails.milestones?.map((mil, idx) => <li key={idx} className="leading-tight">{mil}</li>)}
                       </ul>
                     </div>
                   </div>
@@ -262,12 +265,13 @@ export default function CoachChatPage() {
 
           {/* Render Streaming Simulation Message */}
           {streamingMessageId && (
-            <div className="flex items-start gap-3.5 max-w-[85%]">
-              <div className="w-8 h-8 rounded-full bg-brand-lime/10 border-brand-lime/20 flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-4 max-w-[85%]">
+              <div className="w-8 h-8 rounded-xl bg-brand-lime/10 border border-brand-lime/30 flex items-center justify-center shrink-0">
                 <Bot className="w-4 h-4 text-brand-lime" />
               </div>
-              <div className="space-y-3.5 w-full">
-                <div className="text-xs py-3 px-4.5 rounded-2xl leading-relaxed font-medium bg-zinc-100/60 dark:bg-zinc-900/60 border border-black/5 dark:border-white/5 text-zinc-700 dark:text-zinc-300 rounded-tl-none">
+              <div className="space-y-3 w-full">
+                <div className="text-xs py-3.5 px-5 rounded-2xl leading-relaxed font-medium bg-white/50 dark:bg-zinc-900/40 backdrop-blur-md border border-black/10 dark:border-white/5 text-zinc-700 dark:text-zinc-300 rounded-tl-none relative shadow-sm">
+                  <span className="absolute top-1 right-2.5 font-mono text-[7px] text-brand-cyan animate-pulse">STREAMING_ACTIVE...</span>
                   {streamingText}
                 </div>
                 {/* Streaming custom cards */}
@@ -277,28 +281,28 @@ export default function CoachChatPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="grid grid-cols-1 sm:grid-cols-3 gap-3"
                   >
-                    <div className="glass-card p-3.5 rounded-xl border border-brand-lime/25 dark:border-brand-lime/15">
-                      <div className="flex items-center gap-1.5 mb-2 text-brand-lime font-mono text-[9px] font-bold uppercase">
+                    <div className="glass-card bg-brand-lime/5 p-3.5 rounded-xl border border-brand-lime/20 dark:border-brand-lime/10">
+                      <div className="flex items-center gap-1.5 mb-2 text-brand-lime font-mono text-[9px] font-extrabold uppercase">
                         <Dumbbell className="w-3.5 h-3.5" /> Workouts
                       </div>
-                      <ul className="text-[10px] text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5">
-                        {streamingPlan.workout?.map((w: string, idx: number) => <li key={idx}>{w}</li>)}
+                      <ul className="text-[10px] text-zinc-650 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5 font-mono">
+                        {streamingPlan.workout?.map((w: string, idx: number) => <li key={idx} className="leading-tight">{w}</li>)}
                       </ul>
                     </div>
-                    <div className="glass-card p-3.5 rounded-xl border border-brand-cyan/25 dark:border-brand-cyan/15">
-                      <div className="flex items-center gap-1.5 mb-2 text-brand-cyan font-mono text-[9px] font-bold uppercase">
+                    <div className="glass-card bg-brand-cyan/5 p-3.5 rounded-xl border border-brand-cyan/20 dark:border-brand-cyan/10">
+                      <div className="flex items-center gap-1.5 mb-2 text-brand-cyan font-mono text-[9px] font-extrabold uppercase">
                         <Utensils className="w-3.5 h-3.5" /> Nutrition
                       </div>
-                      <ul className="text-[10px] text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5">
-                        {streamingPlan.meals?.map((m: string, idx: number) => <li key={idx}>{m}</li>)}
+                      <ul className="text-[10px] text-zinc-650 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5 font-mono">
+                        {streamingPlan.meals?.map((m: string, idx: number) => <li key={idx} className="leading-tight">{m}</li>)}
                       </ul>
                     </div>
-                    <div className="glass-card p-3.5 rounded-xl border border-pink-500/25 dark:border-pink-500/15">
-                      <div className="flex items-center gap-1.5 mb-2 text-pink-500 dark:text-pink-400 font-mono text-[9px] font-bold uppercase">
+                    <div className="glass-card bg-pink-500/5 p-3.5 rounded-xl border border-pink-550/20 dark:border-pink-500/10">
+                      <div className="flex items-center gap-1.5 mb-2 text-pink-600 dark:text-pink-400 font-mono text-[9px] font-extrabold uppercase">
                         <Flag className="w-3.5 h-3.5" /> Milestones
                       </div>
-                      <ul className="text-[10px] text-zinc-600 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5">
-                        {streamingPlan.milestones?.map((mil: string, idx: number) => <li key={idx}>{mil}</li>)}
+                      <ul className="text-[10px] text-zinc-650 dark:text-zinc-400 space-y-1.5 list-disc pl-2.5 font-mono">
+                        {streamingPlan.milestones?.map((mil: string, idx: number) => <li key={idx} className="leading-tight">{mil}</li>)}
                       </ul>
                     </div>
                   </motion.div>
