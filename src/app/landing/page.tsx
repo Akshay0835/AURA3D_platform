@@ -159,7 +159,23 @@ function TiltCard({ children, className, style, ...props }: { children: React.Re
 
 export default function LandingPage() {
   const router = useRouter();
-  const theme = useAppStore((state) => state.theme);
+  const theme = 'dark';
+  const storeTheme = useAppStore((state) => state.theme);
+
+  useEffect(() => {
+    // Force dark mode on root document element (html) when landing page is mounted
+    // This keeps the landing page neon-lime even if dashboard is set to light theme
+    const root = window.document.documentElement;
+    root.classList.remove('light');
+    root.classList.add('dark');
+
+    return () => {
+      // Restore actual store theme when leaving landing page
+      root.classList.remove('light', 'dark');
+      root.classList.add(storeTheme);
+    };
+  }, [storeTheme]);
+
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeSetsUsApart, setActiveSetsUsApart] = useState(1); // Default to Strength Build
   const [pricingPeriod, setPricingPeriod] = useState<'monthly' | 'annually'>('monthly');
@@ -368,22 +384,22 @@ export default function LandingPage() {
   // Trainers Profiles
   const trainers = [
     {
-      name: "Ethan Hunter",
+      name: "Vikram Malhotra",
       role: "Master Strength Coach",
-      description: "Former bodybuilding champion focusing on progressive biomechanical overload and power metrics.",
-      img: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=400&q=80"
-    },
-    {
-      name: "Sarah Jenkins",
-      role: "Metabolic Nutritionist",
-      description: "Specializing in athletic calorie calibration, macronutrient breakdowns, and sustainable health strategies.",
-      img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
-    },
-    {
-      name: "Logan Mercer",
-      role: "Functional Mobility Expert",
-      description: "Expert in active recovery schemes, yoga protocols, joint longevity, and dynamic core stabilization.",
+      description: "Former Indian national bodybuilding champion focusing on progressive biomechanical overload and power metrics.",
       img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      name: "Priya Nair",
+      role: "Metabolic Nutritionist",
+      description: "Specializing in athletic calorie calibration, macronutrient breakdowns, and sustainable Indian dietary health strategies.",
+      img: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      name: "Arjun Rao",
+      role: "Functional Mobility Expert",
+      description: "Expert in active recovery schemes, traditional yoga protocols, joint longevity, and dynamic core stabilization.",
+      img: "https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=400&q=80"
     }
   ];
 
@@ -391,21 +407,21 @@ export default function LandingPage() {
   const testimonials = [
     {
       quote: "AURA 3D completely revolutionized my physique. The structural guidance is unmatched. The workouts and nutritional pacing helped me drop body fat from 18% to 9% in just 12 weeks.",
-      author: "Marcus Vance",
+      author: "Rahul Mehta",
       role: "Competitive Athlete & Architect",
-      img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
+      img: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=120&q=80"
     },
     {
       quote: "The interface is extremely premium. The micro-animations and clean grids feel amazing to interact with. It's like a high-performance workspace but engineered for physical evolution.",
-      author: "Elena Rostova",
+      author: "Anjali Desai",
       role: "Software Developer",
-      img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80"
+      img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80"
     },
     {
       quote: "I was skeptical about automated tracking systems, but the biometric indicators, trainer charts, and continuous feedback loop kept me completely dialed in. Highly recommended.",
-      author: "David Chen",
+      author: "Kabir Singh",
       role: "Crossfit Practitioner",
-      img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80"
+      img: "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?auto=format&fit=crop&w=120&q=80"
     }
   ];
 

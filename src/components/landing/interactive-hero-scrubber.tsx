@@ -14,7 +14,7 @@ import {
 import { useAppStore } from '@/store/useAppStore';
 
 export default function InteractiveHeroScrubber() {
-  const theme = useAppStore((state) => state.theme);
+  const theme = 'dark';
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 

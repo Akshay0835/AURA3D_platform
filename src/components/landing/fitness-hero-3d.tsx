@@ -416,8 +416,9 @@ function AnimatedDumbbell({
   const ref = useRef<THREE.Group>(null);
   
   useFrame((state) => {
-    const t = state.clock.getElapsedTime() + startOffset;
-    const angle = t * orbitSpeed;
+    const elapsed = state.clock.getElapsedTime();
+    const t = elapsed + startOffset;
+    const angle = startOffset + elapsed * orbitSpeed;
     if (ref.current) {
       ref.current.position.x = orbitRadius * Math.cos(angle);
       ref.current.position.z = orbitRadius * Math.sin(angle);
@@ -469,8 +470,9 @@ function AnimatedShaker({
   const ref = useRef<THREE.Group>(null);
   
   useFrame((state) => {
-    const t = state.clock.getElapsedTime() + startOffset;
-    const angle = t * orbitSpeed;
+    const elapsed = state.clock.getElapsedTime();
+    const t = elapsed + startOffset;
+    const angle = startOffset + elapsed * orbitSpeed;
     if (ref.current) {
       ref.current.position.x = orbitRadius * Math.cos(angle);
       ref.current.position.z = orbitRadius * Math.sin(angle);
@@ -624,124 +626,133 @@ function RotatingEcosystem({ theme, isMobile }: { theme: 'dark' | 'light'; isMob
 
   return (
     <group ref={groupRef} position={isMobile ? [0, -0.25, -0.3] : [0.85, -0.1, 0]}>
-      {/* Concentric Running Tracks with circular traveling lasers (slowed down) */}
-      <TrackWithLaser radius={2.4} color={colorPrime} speed={0.4} />
-      <TrackWithLaser radius={2.7} color={colorSecond} speed={0.25} />
-      <TrackWithLaser radius={3.0} color={colorPrime} speed={0.3} />
+      {/* Concentric Running Tracks with circular traveling lasers (slowed down) - HIDDEN ON MOBILE */}
+      {!isMobile && (
+        <>
+          <TrackWithLaser radius={2.4} color={colorPrime} speed={0.4} />
+          <TrackWithLaser radius={2.7} color={colorSecond} speed={0.25} />
+          <TrackWithLaser radius={3.0} color={colorPrime} speed={0.3} />
+        </>
+      )}
 
       {/* Centered running mannequin skeleton */}
       <AnimatedHumanoid color={colorPrime} />
 
-      {/* Floating spinning dumbbell (Inner track orbit, clockwise, slowed) */}
-      <AnimatedDumbbell 
-        orbitRadius={2.2} 
-        orbitSpeed={0.08} 
-        baseHeight={0.35} 
-        color={colorDumbbell1} 
-        theme={theme} 
-        startOffset={0.0} 
-        labelType="calories" 
-      />
+      {/* Floating elements - HIDE DECORATIVE OBJECTS ON MOBILE TO REDUCE WEBGL DRAW CALLS AND LAGGING */}
+      {!isMobile && (
+        <>
+          {/* Floating spinning dumbbell (Inner track orbit, clockwise, slowed) */}
+          <AnimatedDumbbell 
+            orbitRadius={2.2} 
+            orbitSpeed={0.08} 
+            baseHeight={0.35} 
+            color={colorDumbbell1} 
+            theme={theme} 
+            startOffset={0.0} 
+            labelType="calories" 
+          />
 
-      {/* Floating spinning dumbbell (Outer track orbit, counter-clockwise, slowed) */}
-      <AnimatedDumbbell 
-        orbitRadius={2.85} 
-        orbitSpeed={-0.06} 
-        baseHeight={-0.15} 
-        color={colorDumbbell2} 
-        theme={theme} 
-        startOffset={3.2} 
-      />
+          {/* Floating spinning dumbbell (Outer track orbit, counter-clockwise, slowed) */}
+          <AnimatedDumbbell 
+            orbitRadius={2.85} 
+            orbitSpeed={-0.06} 
+            baseHeight={-0.15} 
+            color={colorDumbbell2} 
+            theme={theme} 
+            startOffset={3.2} 
+          />
 
-      {/* Floating spinning dumbbell 3 (Middle track orbit, counter-clockwise, slowed) */}
-      <AnimatedDumbbell 
-        orbitRadius={2.55} 
-        orbitSpeed={-0.05} 
-        baseHeight={0.5} 
-        color={colorDumbbell1} 
-        theme={theme} 
-        startOffset={Math.PI} 
-      />
+          {/* Floating spinning dumbbell 3 (Middle track orbit, counter-clockwise, slowed) */}
+          <AnimatedDumbbell 
+            orbitRadius={2.55} 
+            orbitSpeed={-0.05} 
+            baseHeight={0.5} 
+            color={colorDumbbell1} 
+            theme={theme} 
+            startOffset={Math.PI} 
+          />
 
-      {/* Floating spinning dumbbell 4 (Outer track orbit, clockwise, slowed) */}
-      <AnimatedDumbbell 
-        orbitRadius={3.0} 
-        orbitSpeed={0.04} 
-        baseHeight={-0.35} 
-        color={colorDumbbell2} 
-        theme={theme} 
-        startOffset={1.0} 
-      />
+          {/* Floating spinning dumbbell 4 (Outer track orbit, clockwise, slowed) */}
+          <AnimatedDumbbell 
+            orbitRadius={3.0} 
+            orbitSpeed={0.04} 
+            baseHeight={-0.35} 
+            color={colorDumbbell2} 
+            theme={theme} 
+            startOffset={1.0} 
+          />
 
-      {/* Floating spinning dumbbell 5 (Inner-Middle track orbit, clockwise, slowed) */}
-      <AnimatedDumbbell 
-        orbitRadius={2.35} 
-        orbitSpeed={0.07} 
-        baseHeight={-0.25} 
-        color={colorDumbbell1} 
-        theme={theme} 
-        startOffset={2.0} 
-      />
+          {/* Floating spinning dumbbell 5 (Inner-Middle track orbit, clockwise, slowed) */}
+          <AnimatedDumbbell 
+            orbitRadius={2.35} 
+            orbitSpeed={0.07} 
+            baseHeight={-0.25} 
+            color={colorDumbbell1} 
+            theme={theme} 
+            startOffset={2.0} 
+          />
 
-      {/* Floating spinning dumbbell 6 (Middle-Outer track orbit, counter-clockwise, slowed) */}
-      <AnimatedDumbbell 
-        orbitRadius={2.7} 
-        orbitSpeed={-0.045} 
-        baseHeight={0.15} 
-        color={colorDumbbell2} 
-        theme={theme} 
-        startOffset={4.5} 
-      />
+          {/* Floating spinning dumbbell 6 (Middle-Outer track orbit, counter-clockwise, slowed) */}
+          <AnimatedDumbbell 
+            orbitRadius={2.7} 
+            orbitSpeed={-0.045} 
+            baseHeight={0.15} 
+            color={colorDumbbell2} 
+            theme={theme} 
+            startOffset={4.5} 
+          />
 
-      {/* Floating shaker bottle 1 (Middle track orbit, clockwise, slowed) */}
-      <AnimatedShaker 
-        orbitRadius={2.55} 
-        orbitSpeed={0.05} 
-        baseHeight={0.1} 
-        color={colorPrime} 
-        startOffset={1.6} 
-      />
+          {/* Floating shaker bottle 1 (Middle track orbit, clockwise, slowed) */}
+          <AnimatedShaker 
+            orbitRadius={2.55} 
+            orbitSpeed={0.05} 
+            baseHeight={0.1} 
+            color={colorPrime} 
+            startOffset={1.6} 
+          />
 
-      {/* Floating shaker bottle 2 (Inner track orbit, counter-clockwise, slowed) */}
-      <AnimatedShaker 
-        orbitRadius={2.2} 
-        orbitSpeed={-0.08} 
-        baseHeight={-0.1} 
-        color={colorSecond} 
-        startOffset={2.5} 
-      />
+          {/* Floating shaker bottle 2 (Inner track orbit, counter-clockwise, slowed) */}
+          <AnimatedShaker 
+            orbitRadius={2.2} 
+            orbitSpeed={-0.08} 
+            baseHeight={-0.1} 
+            color={colorSecond} 
+            startOffset={2.5} 
+          />
 
-      {/* Floating shaker bottle 3 (Outer track orbit, clockwise, slowed) */}
-      <AnimatedShaker 
-        orbitRadius={2.85} 
-        orbitSpeed={0.06} 
-        baseHeight={0.25} 
-        color={colorPrime} 
-        startOffset={4.8} 
-      />
+          {/* Floating shaker bottle 3 (Outer track orbit, clockwise, slowed) */}
+          <AnimatedShaker 
+            orbitRadius={2.85} 
+            orbitSpeed={0.06} 
+            baseHeight={0.25} 
+            color={colorPrime} 
+            startOffset={4.8} 
+          />
 
-      {/* Floating shaker bottle 4 (Extra outer track orbit, counter-clockwise, slowed) */}
-      <AnimatedShaker 
-        orbitRadius={3.15} 
-        orbitSpeed={-0.035} 
-        baseHeight={0.4} 
-        color={colorSecond} 
-        startOffset={0.8} 
-      />
+          {/* Floating shaker bottle 4 (Extra outer track orbit, counter-clockwise, slowed) */}
+          <AnimatedShaker 
+            orbitRadius={3.15} 
+            orbitSpeed={-0.035} 
+            baseHeight={0.4} 
+            color={colorSecond} 
+            startOffset={0.8} 
+          />
 
-      {/* Floating shaker bottle 5 (Inner-Middle track orbit, clockwise, slowed) */}
-      <AnimatedShaker 
-        orbitRadius={2.45} 
-        orbitSpeed={0.055} 
-        baseHeight={-0.4} 
-        color={colorPrime} 
-        startOffset={5.5} 
-      />
+          {/* Floating shaker bottle 5 (Inner-Middle track orbit, clockwise, slowed) */}
+          <AnimatedShaker 
+            orbitRadius={2.45} 
+            orbitSpeed={0.055} 
+            baseHeight={-0.4} 
+            color={colorPrime} 
+            startOffset={5.5} 
+          />
 
-      {/* Floating bar charts (Front-Right, stationary floating area) */}
-      <group scale={isMobile ? 0.75 : 1.0}>
-        <AnimatedCharts position={isMobile ? [0, -0.85, 0.25] : [1.5, -0.3, 0.7]} color={colorPrime} secColor={colorSecond} theme={theme} />
-      </group>
+          {/* Floating bar charts (Front-Right, stationary floating area) */}
+          <group scale={1.0}>
+            <AnimatedCharts position={[1.5, -0.3, 0.7]} color={colorPrime} secColor={colorSecond} theme={theme} />
+          </group>
+        </>
+      )}
 
       {/* Center Heart Rate Floating Badge */}
       <group position={[0, 1.4, 0]}>
@@ -779,7 +790,7 @@ function CameraRig({ isMobile }: { isMobile: boolean }) {
 }
 
 export default function FitnessHero3D() {
-  const theme = useAppStore((state) => state.theme);
+  const theme = 'dark';
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -804,9 +815,9 @@ export default function FitnessHero3D() {
       }`} />
 
       <Canvas 
-        shadows={{ type: THREE.PCFShadowMap }}
+        shadows={isMobile ? false : { type: THREE.PCFShadowMap }}
         camera={{ position: [0, 0.4, 4.5], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
       >
         <ambientLight intensity={theme === 'dark' ? 0.35 : 0.75} />
         
@@ -815,9 +826,9 @@ export default function FitnessHero3D() {
           position={[3, 4, 3]} 
           intensity={theme === 'dark' ? 2.8 : 1.8} 
           color="#ffffff" 
-          castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
+          castShadow={!isMobile}
+          shadow-mapSize-width={isMobile ? 256 : 1024}
+          shadow-mapSize-height={isMobile ? 256 : 1024}
           shadow-bias={-0.0005}
         />
         

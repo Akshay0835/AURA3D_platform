@@ -18,12 +18,14 @@ import {
   Moon,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Cpu
 } from 'lucide-react';
 import { useState } from 'react';
 
 const menuItems = [
   { name: 'Overview', path: '/dashboard', icon: LayoutDashboard },
+  { name: 'Command Center', path: '/dashboard/command-center', icon: Cpu },
   { name: 'Workout Planner', path: '/dashboard/workout', icon: Flame },
   { name: 'Nutrition Log', path: '/dashboard/nutrition', icon: Salad },
   { name: 'BMI Calculator', path: '/dashboard/bmi', icon: Scale },

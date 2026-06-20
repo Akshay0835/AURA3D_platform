@@ -549,7 +549,7 @@ function SkeletonScene({
 }
 
 export default function BiomechanicalMotionLab() {
-  const theme = useAppStore((state) => state.theme);
+  const theme = 'dark';
   const [mounted, setMounted] = useState(false);
   const [exercise, setExercise] = useState<ExerciseType>('squat');
   

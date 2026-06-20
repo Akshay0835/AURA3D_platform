@@ -321,7 +321,7 @@ function Scene({ theme }: { theme: 'dark' | 'light' }) {
 
 export default function HeroCanvas({ className = "w-full h-[350px] md:h-[500px] xl:h-[600px]" }: { className?: string }) {
   const [mounted, setMounted] = useState(false);
-  const theme = useAppStore((state) => state.theme);
+  const theme = 'dark';
 
   useEffect(() => {
     setMounted(true);

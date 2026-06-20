@@ -17,7 +17,7 @@ interface PricingPlan {
 }
 
 export default function PricingSection({ onSelectPlan }: { onSelectPlan: (plan: string) => void }) {
-  const theme = useAppStore((state) => state.theme);
+  const theme = 'dark';
   const [isAnnual, setIsAnnual] = useState(false);
 
   const plans: PricingPlan[] = [
@@ -39,8 +39,8 @@ export default function PricingSection({ onSelectPlan }: { onSelectPlan: (plan: 
     {
       name: 'Athlete Pro',
       tagline: 'Full interactive biometric analysis with real-time AI guidance.',
-      monthlyPrice: 49,
-      annualPrice: 39,
+      monthlyPrice: 3999,
+      annualPrice: 3199,
       icon: <Zap className="w-5 h-5 text-brand-lime" />,
       features: [
         'Unlimited 3D Biomechanical analysis',
@@ -56,8 +56,8 @@ export default function PricingSection({ onSelectPlan }: { onSelectPlan: (plan: 
     {
       name: 'Neural Elite',
       tagline: 'Unrestricted enterprise capabilities for trainers and coaches.',
-      monthlyPrice: 99,
-      annualPrice: 79,
+      monthlyPrice: 7999,
+      annualPrice: 6399,
       icon: <Sparkles className="w-5 h-5 text-brand-cyan" />,
       features: [
         'Everything in Athlete Pro tier',
@@ -220,7 +220,7 @@ export default function PricingSection({ onSelectPlan }: { onSelectPlan: (plan: 
 
                   {/* Pricing value layout */}
                   <div className="pt-2 flex items-baseline gap-1 font-mono text-left">
-                    <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>$</span>
+                    <span className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>₹</span>
                     <span className={`text-5xl font-black tracking-tighter ${
                       theme === 'dark' ? 'text-white' : 'text-zinc-900'
                     }`}>
@@ -233,7 +233,7 @@ export default function PricingSection({ onSelectPlan }: { onSelectPlan: (plan: 
 
                   {isAnnual && price > 0 && (
                     <span className="text-[9px] font-mono text-zinc-500 font-bold block text-left uppercase">
-                      Billed annually (${price * 12}/year)
+                      Billed annually (₹{price * 12}/year)
                     </span>
                   )}
                   {!isAnnual && price > 0 && (
