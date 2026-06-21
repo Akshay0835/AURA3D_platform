@@ -860,15 +860,7 @@ export default function LandingPage() {
           <div className={`relative w-full max-w-md aspect-[4/3] rounded-2xl overflow-visible border shadow-2xl group cursor-pointer ${
             theme === 'dark' ? 'border-white/5 bg-zinc-950' : 'border-zinc-200 bg-white'
           }`}>
-            {/* Holographic overlays */}
-            <div className="absolute top-4 left-4 z-20 px-2.5 py-1.5 rounded-lg border border-brand-lime/30 bg-black/85 backdrop-blur-md font-mono text-[9px] font-black uppercase tracking-widest text-brand-lime animate-pulse hidden sm:flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime animate-ping" />
-              <span>SCANNING: DELTOIDS // EMG LOAD</span>
-            </div>
-            
-            <div className="absolute bottom-4 right-4 z-20 px-2.5 py-1.5 rounded-lg border border-brand-cyan/30 bg-black/85 backdrop-blur-md font-mono text-[9px] font-black uppercase tracking-widest text-brand-cyan hidden sm:block">
-              CALIBRATION: 99.4% STABLE
-            </div>
+
 
             {/* Vignette background layer */}
             <div className={`absolute inset-0 rounded-2xl overflow-hidden z-0 ${
@@ -1412,15 +1404,7 @@ export default function LandingPage() {
               <div className={`relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-visible border shadow-2xl group cursor-pointer transition-colors duration-300 ${
                 theme === 'dark' ? 'border-white/5 bg-zinc-950' : 'border-zinc-200 bg-white'
               }`}>
-                {/* Holographic overlays */}
-                <div className="absolute top-4 left-4 z-20 px-2.5 py-1.5 rounded-lg border border-brand-lime/30 bg-black/85 backdrop-blur-md font-mono text-[9px] font-black uppercase tracking-widest text-brand-lime animate-pulse hidden sm:flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-lime animate-ping" />
-                  <span>BIOMETRIC_EVOLUTION: ON</span>
-                </div>
-                
-                <div className="absolute bottom-4 right-4 z-20 px-2.5 py-1.5 rounded-lg border border-pink-500/30 bg-black/85 backdrop-blur-md font-mono text-[9px] font-black uppercase tracking-widest text-pink-400 hidden sm:block">
-                  FAT_INDEX: -9.2% // WEEK_12
-                </div>
+
 
                 {/* Vignette background */}
                 <div className={`absolute inset-0 rounded-2xl overflow-hidden z-0 transition-colors duration-300 ${
@@ -1648,12 +1632,7 @@ export default function LandingPage() {
               theme === 'dark' ? 'text-zinc-700' : 'text-zinc-500'
             }`}>© 2026 AURA 3D Inc. All rights reserved.</p>
 
-            {/* High-Tech Telemetry Footer Indicators */}
-            <div className="pt-6 border-t border-white/5 font-mono text-[8px] text-zinc-550 flex flex-col gap-2 uppercase tracking-widest leading-relaxed">
-              <div>System Telemetry Status: <span className="text-brand-lime font-bold">ONLINE</span></div>
-              <div>Neural Coach Nodes: <span className="text-brand-cyan font-bold">ACTIVE (v1.0.4)</span></div>
-              <div>Wellness Telemetry Secure: <span className="text-brand-lime font-bold">SECURE [SSL]</span></div>
-            </div>
+
           </div>
 
           {/* Quick links col 1 */}
