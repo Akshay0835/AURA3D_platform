@@ -139,7 +139,7 @@ export interface AppState {
   workoutHistory: CompletedWorkout[];
   activeRoutine: WorkoutRoutine | null;
   liveWorkoutTimer: number; // in seconds
-  liveWorkoutIntervalId: any | null;
+  liveWorkoutIntervalId: ReturnType<typeof setInterval> | null;
   isLiveWorkoutRunning: boolean;
   startLiveWorkout: (routineId: string) => void;
   pauseLiveWorkout: () => void;
@@ -152,12 +152,15 @@ export interface AppState {
   addRoutine: (routine: WorkoutRoutine) => void;
   deleteRoutine: (id: string) => void;
   generateAIWorkout: (goal: string, experience: string, days: number, equipment: string) => Promise<WorkoutRoutine>;
+  addExerciseToRoutine: (routineId: string, name: string, sets: number, reps: number, weight: number) => void;
+  removeExerciseFromRoutine: (routineId: string, exerciseId: string) => void;
+  updateExerciseName: (routineId: string, exerciseId: string, name: string) => void;
 
   // Nutrition
   foodEntries: FoodEntry[];
   addFoodEntry: (entry: Omit<FoodEntry, 'id' | 'time'>) => void;
   deleteFoodEntry: (id: string) => void;
-  generateAIMealPlan: (dietPreference: string, goal: string, calorieTarget: number) => Promise<any>;
+  generateAIMealPlan: (dietPreference: string, goal: string, calorieTarget: number) => Promise<unknown>;
 
   // BMI
   bmiHistory: BMIHistoryEntry[];
@@ -449,6 +452,56 @@ export const useAppStore = create<AppState>((set, get) => ({
   deleteRoutine: (id) => set((state) => ({
     routines: state.routines.filter((r) => r.id !== id)
   })),
+
+  addExerciseToRoutine: (routineId, name, sets, reps, weight) => set((state) => {
+    const updatedRoutines = state.routines.map((routine) => {
+      if (routine.id === routineId) {
+        const newExercise = {
+          id: `ex-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name,
+          sets,
+          reps,
+          weight,
+          completedSets: Array(sets).fill(false)
+        };
+        return {
+          ...routine,
+          exercises: [...routine.exercises, newExercise]
+        };
+      }
+      return routine;
+    });
+    return { routines: updatedRoutines };
+  }),
+
+  removeExerciseFromRoutine: (routineId, exerciseId) => set((state) => {
+    const updatedRoutines = state.routines.map((routine) => {
+      if (routine.id === routineId) {
+        return {
+          ...routine,
+          exercises: routine.exercises.filter((ex) => ex.id !== exerciseId)
+        };
+      }
+      return routine;
+    });
+    return { routines: updatedRoutines };
+  }),
+
+  updateExerciseName: (routineId, exerciseId, name) => set((state) => {
+    const updatedRoutines = state.routines.map((routine) => {
+      if (routine.id === routineId) {
+        const exercises = routine.exercises.map((ex) => {
+          if (ex.id === exerciseId) {
+            return { ...ex, name };
+          }
+          return ex;
+        });
+        return { ...routine, exercises };
+      }
+      return routine;
+    });
+    return { routines: updatedRoutines };
+  }),
 
   generateAIWorkout: (goal, experience, days, equipment) => {
     return new Promise((resolve) => {
